@@ -57,6 +57,7 @@ function checkGuess(guess) {
 }
 
 // Функция для обработки попытки угадать слово
+// Функция для обработки попытки угадать слово
 function handleGuess() {
   const guess = input.value.toLowerCase();
   if (guess.length !== targetWord.length) {
@@ -68,21 +69,27 @@ function handleGuess() {
   const cells = board.querySelectorAll(".cell");
   const start = attempts * targetWord.length;
 
-  // Добавляем буквы и анимацию переворота
+  // Добавляем анимацию переворота для каждой буквы
   guess.split("").forEach((letter, i) => {
     const cell = cells[start + i];
     const front = cell.querySelector(".cell-front");
     const back = cell.querySelector(".cell-back");
 
-    front.textContent = letter; // Добавляем букву на переднюю сторону
-    back.textContent = letter;  // Добавляем букву на заднюю сторону
+    // Временно оставляем пустыми переднюю и заднюю сторону
+    front.textContent = "";
+    back.textContent = "";
 
+    // Запускаем анимацию переворота
     setTimeout(() => {
       cell.classList.add("flip"); // Переворот
-      setTimeout(() => {
-        cell.classList.add(result[i]); // Добавляем цвет после переворота
-      }, 300); // Задержка для плавного изменения цвета
     }, i * 300); // Задержка для каждой буквы
+
+    // После завершения переворота добавляем буквы на переднюю и заднюю стороны
+    setTimeout(() => {
+      front.textContent = letter; // Добавляем букву на переднюю сторону
+      back.textContent = letter;  // Добавляем букву на заднюю сторону
+      cell.classList.add(result[i]); // Цвет после переворота
+    }, 600); // Задержка для добавления букв (после завершения анимации переворота)
   });
 
   attempts++;
@@ -106,6 +113,7 @@ function handleGuess() {
 
   input.value = "";
 }
+
 
 // Функция для инициализации игры
 function initGame() {
