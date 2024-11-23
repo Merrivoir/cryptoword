@@ -14,6 +14,25 @@
     <button id="submitGuess">Отправить</button>
     <p id="message"></p>
   </div>
+  <script>
+const cell = document.createElement("div");
+cell.classList.add("cell");
+
+const inner = document.createElement("div");
+inner.classList.add("cell-inner");
+
+const front = document.createElement("div");
+front.classList.add("cell-front");
+
+const back = document.createElement("div");
+back.classList.add("cell-back");
+
+// Вкладываем элементы
+inner.appendChild(front);
+inner.appendChild(back);
+cell.appendChild(inner);
+board.appendChild(cell);
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
