@@ -7,16 +7,6 @@ const message = document.getElementById("message");
 
 let attempts = 0;
 
-// Создание игрового поля
-function createBoard() {
-  board.style.gridTemplateColumns = `repeat(${targetWord.length}, 50px)`;
-  for (let i = 0; i < maxAttempts * targetWord.length; i++) {
-    const cell = document.createElement("div");
-    cell.classList.add("cell");
-    board.appendChild(cell);
-  }
-}
-
 // Проверка слова
 function checkGuess(guess) {
   const result = [];
@@ -36,49 +26,6 @@ function checkGuess(guess) {
 
   return result;
 }
-
-// Обработка ввода
-function handleGuess() {
-  const guess = input.value.toLowerCase();
-  if (guess.length !== targetWord.length) {
-    message.textContent = `Слово должно быть из ${targetWord.length} букв.`;
-    return;
-  }
-
-  const result = checkGuess(guess);
-  const cells = board.querySelectorAll(".cell");
-  const start = attempts * targetWord.length;
-
-  for (let i = 0; i < guess.length; i++) {
-    const cell = cells[start + i];
-    cell.textContent = guess[i];
-    cell.classList.add(result[i]);
-  }
-
-  attempts++;
-
-  if (guess === targetWord) {
-    message.textContent = "Поздравляем! Вы угадали слово!";
-    submitButton.disabled = true;
-    input.disabled = true;
-  } else if (attempts === maxAttempts) {
-    message.textContent = `Увы, вы не угадали. Загаданное слово: ${targetWord}`;
-    submitButton.disabled = true;
-    input.disabled = true;
-  } else {
-    message.textContent = "";
-  }
-
-  input.value = "";
-}
-
-// Инициализация
-createBoard();
-submitButton.addEventListener("click", handleGuess);
-input.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") handleGuess();
-});
-
 
 //добавление анимации
 function handleGuess() {
@@ -129,3 +76,43 @@ function handleGuess() {
   input.value = "";
 }
 
+// Создание клетки с анимацией переворота
+function createCell() {
+  const cell = document.createElement("div");
+  cell.classList.add("cell");
+
+  // Контейнер для передней и задней стороны
+  const inner = document.createElement("div");
+  inner.classList.add("cell-inner");
+
+  // Передняя сторона карточки
+  const front = document.createElement("div");
+  front.classList.add("cell-front");
+  inner.appendChild(front);
+
+  // Задняя сторона карточки
+  const back = document.createElement("div");
+  back.classList.add("cell-back");
+  inner.appendChild(back);
+
+  // Вставляем контейнер внутрь карточки
+  cell.appendChild(inner);
+
+  return cell;
+}
+
+// Добавление карточек в игровое поле
+function createBoard() {
+  board.style.gridTemplateColumns = `repeat(${targetWord.length}, 50px)`;
+  for (let i = 0; i < maxAttempts * targetWord.length; i++) {
+    const cell = createCell();
+    board.appendChild(cell);
+  }
+}
+
+// Инициализация
+createBoard();
+submitButton.addEventListener("click", handleGuess);
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") handleGuess();
+});
