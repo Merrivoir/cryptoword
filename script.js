@@ -1,125 +1,161 @@
-// Переменные для управления игрой
-const targetWord = "слово"; // Загаданное слово
-const maxAttempts = 6; // Максимальное количество попыток
-let attempts = 0; // Счетчик попыток
-let board = document.getElementById("board"); // Контейнер для игрового поля
-let input = document.getElementById("guess-input"); // Поле для ввода
-let submitButton = document.getElementById("submit-button"); // Кнопка для отправки
-let message = document.getElementById("message"); // Сообщение для игрока
+const targetWord = "колпак"; // Загаданное слово
+const attempts = 6; // Количество попыток
+let currentAttempt = 0; // Текущая попытка
+let currentGuess = ""; // Слово, которое вводится
+const maxWordLength = targetWord.length; // Длина слова
 
-// Функция для создания ячейки
-function createCell() {
-  const cell = document.createElement("div");
-  cell.classList.add("cell");
+const board = document.getElementById("board");
+const keyboardContainer = document.getElementById("keyboard");
+const message = document.getElementById("message");
 
-  // Контейнер для передней и задней стороны
-  const inner = document.createElement("div");
-  inner.classList.add("cell-inner");
-
-  // Передняя сторона карточки
-  const front = document.createElement("div");
-  front.classList.add("cell-front");
-  inner.appendChild(front);
-
-  // Задняя сторона карточки
-  const back = document.createElement("div");
-  back.classList.add("cell-back");
-  inner.appendChild(back);
-
-  // Вставляем контейнер внутрь карточки
-  cell.appendChild(inner);
-
-  return cell;
-}
-
-// Функция для создания игрового поля
+// Создаем игровое поле
 function createBoard() {
-  board.style.gridTemplateColumns = `repeat(${targetWord.length}, 50px)`;
-  for (let i = 0; i < maxAttempts * targetWord.length; i++) {
-    const cell = createCell();
-    board.appendChild(cell);
-  }
-}
+  for (let i = 0; i < attempts; i++) {
+    const row = document.createElement("div");
+    row.classList.add("row");
 
-// Функция для проверки ввода
-function checkGuess(guess) {
-  const result = [];
-  for (let i = 0; i < guess.length; i++) {
-    if (guess[i] === targetWord[i]) {
-      result.push("correct"); // Буква на правильном месте
-    } else if (targetWord.includes(guess[i])) {
-      result.push("present"); // Буква есть в слове, но не на правильном месте
-    } else {
-      result.push("absent"); // Буквы нет в слове
+    for (let j = 0; j < maxWordLength; j++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      row.appendChild(cell);
     }
+
+    board.appendChild(row);
   }
-  return result;
 }
 
-// Функция для обработки попытки угадать слово
-// Функция для обработки попытки угадать слово
-function handleGuess() {
-  const guess = input.value.toLowerCase();
-  if (guess.length !== targetWord.length) {
-    message.textContent = `Слово должно быть из ${targetWord.length} букв.`;
+// Русская раскладка клавиатуры (3 ряда)
+const keyboardLayout = [
+  "ЙЦУКЕНГШЩЗХЪ",
+  "ФЫВАПРОЛДЖЭ",
+  "ЯЧСМИТЬБЮ"
+];
+
+// Генерация экранной клавиатуры
+function generateKeyboard() {
+  keyboardLayout.forEach((rowLetters, rowIndex) => {
+    const row = document.createElement("div");
+    row.classList.add("keyboard-row");
+
+    rowLetters.split("").forEach((letter) => {
+      const key = document.createElement("div");
+      key.classList.add("key");
+      key.textContent = letter;
+      key.dataset.letter = letter;
+      key.addEventListener("click", () => handleKeyPress(letter));
+      row.appendChild(key);
+    });
+
+    // Добавляем "Backspace" и "Enter" в нижний ряд
+    if (rowIndex === keyboardLayout.length - 2) {
+      const enterKey = document.createElement("div");
+      enterKey.classList.add("key", "special-key");
+      enterKey.textContent = "Enter";
+      enterKey.dataset.action = "Enter";
+      enterKey.addEventListener("click", checkGuess);
+      row.appendChild(enterKey);
+    } else if (rowIndex === 0) {
+      const backspaceKey = document.createElement("div");
+      backspaceKey.classList.add("key", "special-key");
+      backspaceKey.textContent = "⌫";
+      backspaceKey.dataset.action = "Backspace";
+      backspaceKey.addEventListener("click", handleBackspace);
+      row.appendChild(backspaceKey);
+    }
+
+    keyboardContainer.appendChild(row);
+  });
+}
+
+// Обработка нажатия клавиши
+function handleKeyPress(letter) {
+  if (currentGuess.length < maxWordLength) {
+    const row = board.children[currentAttempt];
+    const cell = row.children[currentGuess.length];
+    cell.textContent = letter;
+    currentGuess += letter;
+  }
+}
+
+// Обработка удаления буквы
+function handleBackspace() {
+  if (currentGuess.length > 0) {
+    const row = board.children[currentAttempt];
+    const cell = row.children[currentGuess.length - 1];
+    cell.textContent = "";
+    currentGuess = currentGuess.slice(0, -1);
+  }
+}
+
+// Проверка текущей попытки
+function checkGuess() {
+  if (currentGuess.length !== maxWordLength) {
+    message.textContent = "Введите полное слово!";
     return;
   }
 
-  const result = checkGuess(guess);
-  const cells = board.querySelectorAll(".cell");
-  const start = attempts * targetWord.length;
-
-  // Добавляем анимацию переворота для каждой буквы
-  guess.split("").forEach((letter, i) => {
-    const cell = cells[start + i];
-    const front = cell.querySelector(".cell-front");
-    const back = cell.querySelector(".cell-back");
-
-    // Временно оставляем пустыми переднюю и заднюю сторону
-    front.textContent = "";
-    back.textContent = "";
-
-    // Запускаем анимацию переворота
-    setTimeout(() => {
-      cell.classList.add("flip"); // Переворот
-    }, i * 300); // Задержка для каждой буквы
-
-    // После завершения переворота добавляем буквы на переднюю и заднюю стороны
-    setTimeout(() => {
-      front.textContent = letter; // Добавляем букву на переднюю сторону
-      back.textContent = letter;  // Добавляем букву на заднюю сторону
-      cell.classList.add(result[i]); // Цвет после переворота
-    }, 600); // Задержка для добавления букв (после завершения анимации переворота)
-  });
-
-  attempts++;
-
-  // Проверка выигрыша
-  if (guess === targetWord) {
-    setTimeout(() => {
-      message.textContent = "Поздравляем! Вы угадали слово!";
-      submitButton.disabled = true;
-      input.disabled = true;
-    }, guess.length * 300);
-  } else if (attempts === maxAttempts) {
-    setTimeout(() => {
-      message.textContent = `Увы, вы не угадали. Загаданное слово: ${targetWord}`;
-      submitButton.disabled = true;
-      input.disabled = true;
-    }, guess.length * 300);
-  } else {
-    message.textContent = "";
+  const feedback = [];
+  for (let i = 0; i < maxWordLength; i++) {
+    if (currentGuess[i] === targetWord[i]) {
+      feedback.push("correct");
+    } else if (targetWord.includes(currentGuess[i])) {
+      feedback.push("present");
+    } else {
+      feedback.push("absent");
+    }
   }
 
-  input.value = "";
+  updateRow(feedback);
+  updateKeyboard(feedback);
+
+  if (currentGuess === targetWord) {
+    message.textContent = "Поздравляем! Вы угадали слово!";
+    return;
+  }
+
+  if (currentAttempt === attempts - 1) {
+    message.textContent = `Вы проиграли! Слово было: ${targetWord}`;
+    return;
+  }
+
+  currentAttempt++;
+  currentGuess = "";
 }
 
+function updateRow(feedback) {
+  const row = board.children[currentAttempt];
+  feedback.forEach((status, i) => {
+    const cell = row.children[i];
+    cell.classList.add(status);
+  });
+}
 
-// Функция для инициализации игры
-function initGame() {
-  createBoard(); // Создаем поле
-  submitButton.addEventListener("click", handleGuess); // Обработчик нажатия кнопки
+// Обновление клавиатуры с подсветкой
+function updateKeyboard(feedback) {
+  const keys = document.querySelectorAll(".key");
+  currentGuess.split("").forEach((letter, index) => {
+    const key = Array.from(keys).find((k) => k.dataset.letter === letter);
+    if (feedback[index] === "correct") {
+      key.classList.add("correct");
+    } else if (feedback[index] === "present") {
+      key.classList.add("present");
+    } else {
+      key.classList.add("used");
+    }
+  });
 }
 
 // Инициализация игры
-initGame();
+createBoard();
+generateKeyboard();
+
+// Обработка ввода с клавиатуры
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    checkGuess();
+  } else if (e.key === "Backspace") {
+    handleBackspace();
+  } else if (/^[а-яёА-ЯЁ]$/.test(e.key)) {
+    handleKeyPress(e.key.toUpperCase());
+  }
+});
