@@ -26,9 +26,9 @@ function createBoard() {
 
 // Русская раскладка клавиатуры (3 ряда)
 const keyboardLayout = [
-  "ЙЦУКЕНГШЩЗХЪ",
-  "ФЫВАПРОЛДЖЭ",
-  "ЯЧСМИТЬБЮ"
+  "ЙЦУКЕНГШЩЗХЪ".split(""), // Верхний ряд
+  "ФЫВАПРОЛДЖЭ".split(""),  // Средний ряд
+  ["⌫", "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", "Enter"], // Нижний ряд
 ];
 
 // Генерация экранной клавиатуры
@@ -37,32 +37,30 @@ function generateKeyboard() {
     const row = document.createElement("div");
     row.classList.add("keyboard-row");
 
-    rowLetters.split("").forEach((letter) => {
-      const key = document.createElement("div");
-      key.classList.add("key");
-      key.textContent = letter;
-      key.dataset.letter = letter;
-      key.addEventListener("click", () => handleKeyPress(letter));
-      row.appendChild(key);
+    rowLetters.forEach((letter) => {
+      if(letter === "⌫") {
+        const backspaceKey = document.createElement("div");
+        backspaceKey.classList.add("key", "special-key");
+        backspaceKey.textContent = "⌫";
+        backspaceKey.dataset.action = "Backspace";
+        backspaceKey.addEventListener("click", handleBackspace);
+        row.appendChild(backspaceKey);
+      } else if(letter === "Enter") {
+        const enterKey = document.createElement("div");
+        enterKey.classList.add("key", "special-key");
+        enterKey.textContent = "Enter";
+        enterKey.dataset.action = "Enter";
+        enterKey.addEventListener("click", checkGuess);
+        row.appendChild(enterKey);
+      } else {
+        const key = document.createElement("div");
+        key.classList.add("key");
+        key.textContent = letter;
+        key.dataset.letter = letter;
+        key.addEventListener("click", () => handleKeyPress(letter));
+        row.appendChild(key);
+      }
     });
-
-    // Добавляем "Backspace" и "Enter"
-    if (rowIndex === 2) {
-      const enterKey = document.createElement("div");
-      enterKey.classList.add("key", "special-key");
-      enterKey.textContent = "Enter";
-      enterKey.dataset.action = "Enter";
-      enterKey.addEventListener("click", checkGuess);
-      row.appendChild(enterKey);
-
-      const backspaceKey = document.createElement("div");
-      backspaceKey.classList.add("key", "special-key");
-      backspaceKey.textContent = "⌫";
-      backspaceKey.dataset.action = "Backspace";
-      backspaceKey.addEventListener("click", handleBackspace);
-      row.appendChild(backspaceKey);
-    }
-
     keyboardContainer.appendChild(row);
   });
 }
