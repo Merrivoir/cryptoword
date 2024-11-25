@@ -23,12 +23,17 @@ h1 {
 .row {
   display: flex;
   gap: 4px;
+  justify-content: space-between; /* Равномерное распределение пространства */
+  align-items: center;
+  width: 100%;
+  border: none
 }
 
 /* Карточки букв */
 .cell {
   width: 60px;
   height: 60px;
+  flex-grow: 1;
   font-size: 22px;
   font-weight: bold;
   text-align: center;
