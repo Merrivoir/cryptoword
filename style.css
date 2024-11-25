@@ -16,7 +16,7 @@ h1 {
   justify-content: center;
   margin: 20px auto;
   min-width: 180px; /* Фиксированная ширина */
-  max-width: 90%;
+  max-width: 400px;
 }
 
 /* Каждая строка */
