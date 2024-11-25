@@ -9,12 +9,13 @@ h1 {
 }
 
 .board {
-  display: grid;
-  grid-template-rows: repeat(6, 60px); /* 6 строк для попыток */
+  display: flex;
+  flex-direction: column;
   gap: 5px;
   justify-content: center;
   margin: 20px auto;
-  width: 250px; /* Фиксированная ширина */
+  min-width: 180px; /* Фиксированная ширина */
+  max-width: 90%;
 }
 
 /* Каждая строка */
@@ -59,7 +60,7 @@ h1 {
   align-items: center;
   gap: 4px; /* Расстояние между рядами */
   margin: 20px auto;
-  width: 90%;
+  width: 96%;
 }
 
 /* Ряд клавиатуры */
