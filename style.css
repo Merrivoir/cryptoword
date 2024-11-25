@@ -11,7 +11,8 @@ h1 {
 .board {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 4px;
   justify-content: center;
   margin: 20px auto;
   min-width: 180px; /* Фиксированная ширина */
@@ -61,6 +62,7 @@ h1 {
   gap: 4px; /* Расстояние между рядами */
   margin: 20px auto;
   width: 96%;
+  max-width: 480px;
 }
 
 /* Ряд клавиатуры */
