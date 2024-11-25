@@ -1,4 +1,4 @@
-const targetWord = "колпак"; // Загаданное слово
+const targetWord = "лопата"; // Загаданное слово
 const attempts = 6; // Количество попыток
 let currentAttempt = 0; // Текущая попытка
 let currentGuess = ""; // Слово, которое вводится
@@ -46,15 +46,15 @@ function generateKeyboard() {
       row.appendChild(key);
     });
 
-    // Добавляем "Backspace" и "Enter" в нижний ряд
-    if (rowIndex === keyboardLayout.length - 2) {
+    // Добавляем "Backspace" и "Enter"
+    if (rowIndex === 2) {
       const enterKey = document.createElement("div");
       enterKey.classList.add("key", "special-key");
       enterKey.textContent = "Enter";
       enterKey.dataset.action = "Enter";
       enterKey.addEventListener("click", checkGuess);
       row.appendChild(enterKey);
-    } else if (rowIndex === 0) {
+
       const backspaceKey = document.createElement("div");
       backspaceKey.classList.add("key", "special-key");
       backspaceKey.textContent = "⌫";
@@ -73,7 +73,8 @@ function handleKeyPress(letter) {
     const row = board.children[currentAttempt];
     const cell = row.children[currentGuess.length];
     cell.textContent = letter;
-    currentGuess += letter;
+    currentGuess += letter.toLowerCase();
+    console.log(currentGuess);
   }
 }
 
@@ -95,16 +96,33 @@ function checkGuess() {
   }
 
   const feedback = [];
+  const targetWordArray = targetWord.split(""); // Массив из символов targetWord
+  const guessedLettersUsed = Array(maxWordLength).fill(false); // Флаги использования букв
+  
+  // Первая проверка: буквы на правильных местах
   for (let i = 0; i < maxWordLength; i++) {
     if (currentGuess[i] === targetWord[i]) {
-      feedback.push("correct");
-    } else if (targetWord.includes(currentGuess[i])) {
-      feedback.push("present");
-    } else {
-      feedback.push("absent");
+      feedback[i] = "correct";
+      guessedLettersUsed[i] = true; // Помечаем букву как использованную
     }
   }
 
+  // Вторая проверка: буквы, присутствующие в слове, но не на своем месте
+  for (let i = 0; i < maxWordLength; i++) {
+    if (!feedback[i]) { // Если не "correct"
+      const charIndex = targetWordArray.findIndex(
+        (char, index) => char === currentGuess[i] && !guessedLettersUsed[index]
+      );
+      if (charIndex !== -1) {
+        feedback[i] = "present";
+        guessedLettersUsed[charIndex] = true; // Помечаем эту букву как использованную
+      } else {
+        feedback[i] = "absent";
+      }
+    }
+  }
+
+  console.log(feedback);
   updateRow(feedback);
   updateKeyboard(feedback);
 
@@ -134,7 +152,7 @@ function updateRow(feedback) {
 function updateKeyboard(feedback) {
   const keys = document.querySelectorAll(".key");
   currentGuess.split("").forEach((letter, index) => {
-    const key = Array.from(keys).find((k) => k.dataset.letter === letter);
+    const key = Array.from(keys).find((k) => k.dataset.letter === letter.toUpperCase());
     if (feedback[index] === "correct") {
       key.classList.add("correct");
     } else if (feedback[index] === "present") {
