@@ -150,7 +150,7 @@ function handleKeyPress(letter) {
     front.textContent = letter.toUpperCase();
 
     // Добавляем букву в заднюю сторону (для отображения после переворота)
-    back.textContent = letter.toUpperCase();
+    //back.textContent = letter.toUpperCase();
 
     // Обновляем текущую попытку
     currentGuess += letter.toLowerCase();
@@ -241,6 +241,7 @@ function updateRow(feedback) {
     const cell = row.children[i];
     const inner = cell.querySelector(".cell-inner");
     const back = cell.querySelector(".cell-back");
+    const front = cell.querySelector(".cell-front")
 
     // Устанавливаем текст на задней стороне карточки
     back.textContent = currentGuess[i].toUpperCase();
@@ -249,10 +250,11 @@ function updateRow(feedback) {
     setTimeout(() => {
       inner.classList.add("flip");
       back.classList.add(status);
+      
 
       // После завершения анимации переворота, добавляем статус
       inner.addEventListener("transitionend", () => {
-        //back.classList.add(status);
+        front.style.display = 'none';
       }, { once: true });
     }, i * 300); // Добавляем задержку для последовательного переворота
   });
