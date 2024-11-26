@@ -193,6 +193,7 @@ function updateKeyboard(feedback) {
   currentGuess.split("").forEach((letter, index) => {
     const key = Array.from(keys).find((k) => k.dataset.letter === letter.toUpperCase());
     if (feedback[index] === "correct") {
+      key.className = 'key'
       key.classList.add("correct");
     } else if (feedback[index] === "present") {
       key.classList.add("present");
