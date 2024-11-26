@@ -1,12 +1,15 @@
-const targetWord = "лопата"; // Загаданное слово
-const attempts = 6; // Количество попыток
-let currentAttempt = 0; // Текущая попытка
-let currentGuess = ""; // Слово, которое вводится
-const maxWordLength = targetWord.length; // Длина слова
+const gasURL = "https://script.google.com/macros/s/AKfycbyxhETGvMWEiFfHP6FRzxxtwtwHUTNqwBLOEv47aObKVYNXsYTuD5WLUvj-D1Il4uhv/exec"
 
 const board = document.getElementById("board");
 const keyboardContainer = document.getElementById("keyboard");
 const message = document.getElementById("message");
+
+//Переменные для игрового поля
+let currentAttempt = 0; // Текущая попытка
+let currentGuess = ""; // Слово, которое вводится
+let targetWord = ""; // Загаданное 
+let maxWordLength;
+const attempts = 6; // Количество попыток
 
 // Создаем игровое поле
 function createBoard() {
@@ -23,6 +26,46 @@ function createBoard() {
     board.appendChild(row);
   }
 }
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const loading = document.getElementById('loading');
+    const content = document.getElementById('content');
+    const serverResponse = document.getElementById('server-response');
+
+    // Показать сообщение о загрузке
+    loading.style.display = 'block';
+
+    // URL вашего веб-приложения Google Apps Script
+    const url = gasURL;
+
+    try {
+        // Отправка GET-запроса и ожидание ответа
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
+        }
+        
+        const data = await response.json();
+
+        // Получение ответа от сервера
+        loading.style.display = 'none';
+
+        // Присвоение содержимого переменной target
+        targetWord = data.randomValue.toLowerCase();
+        maxWordLength = targetWord.length; // Длина слова
+        console.log('Target:', targetWord);
+
+        createBoard();
+
+    } catch (error) {
+        console.error('Ошибка:', error);
+        serverResponse.textContent = 'Произошла ошибка при загрузке данных.';
+
+        // Скрыть сообщение о загрузке и показать сообщение об ошибке
+        loading.style.display = 'none';
+        content.style.display = 'block';
+    }
+});
 
 // Русская раскладка клавиатуры (3 ряда)
 const keyboardLayout = [
@@ -72,7 +115,6 @@ function handleKeyPress(letter) {
     const cell = row.children[currentGuess.length];
     cell.textContent = letter;
     currentGuess += letter.toLowerCase();
-    console.log(currentGuess);
   }
 }
 
@@ -120,7 +162,6 @@ function checkGuess() {
     }
   }
 
-  console.log(feedback);
   updateRow(feedback);
   updateKeyboard(feedback);
 
@@ -162,7 +203,6 @@ function updateKeyboard(feedback) {
 }
 
 // Инициализация игры
-createBoard();
 generateKeyboard();
 
 // Обработка ввода с клавиатуры
