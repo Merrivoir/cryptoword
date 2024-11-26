@@ -7,7 +7,8 @@ const modalWindow = document.getElementById("myModal");
 const modalHead = document.getElementById("modal-head");
 const modalInfo = document.getElementById("modal-info");
 const closeBtn = document.querySelector(".close");
-
+let listWord;
+let isWordPresent;
 //Переменные для игрового поля
 let currentAttempt = 0; // Текущая попытка
 let currentGuess = ""; // Слово, которое вводится
@@ -54,7 +55,45 @@ function createBoard() {
     board.appendChild(row);
   }
 }
+// праздничный фейерверк
+function createFirework(x, y) {
+  const fireworkContainer = document.getElementById("fireworks-container");
 
+  for (let i = 0; i < 20; i++) { // 20 частиц в одном фейерверке
+    const firework = document.createElement("div");
+    firework.classList.add("firework");
+
+    // Случайные направления для частиц
+    const dx = Math.random() * 2 - 1; // От -1 до 1
+    const dy = Math.random() * 2 - 1; // От -1 до 1
+
+    // Установка позиций и направления частиц
+    firework.style.setProperty("--dx", dx);
+    firework.style.setProperty("--dy", dy);
+    firework.style.left = `${x}px`;
+    firework.style.top = `${y}px`;
+
+    fireworkContainer.appendChild(firework);
+
+    // Удаление частицы после завершения анимации
+    firework.addEventListener("animationend", () => {
+      firework.remove();
+    });
+  }
+}
+
+function launchFireworks() {
+  // Генерация фейерверков в случайных местах
+  for (let i = 0; i < attempts - currentAttempt; i++) { // Количество фейерверков
+    setTimeout(() => {
+      const x = Math.random() * window.innerWidth; // Случайная позиция X
+      const y = Math.random() * window.innerHeight / 2; // Случайная позиция Y (верхняя половина экрана)
+      createFirework(x, y);
+    }, i * 500); // Задержка между фейерверками
+  }
+}
+
+// ожидание загрузки слова из словаря
 document.addEventListener('DOMContentLoaded', async () => {
     const loading = document.getElementById('loading');
     const content = document.getElementById('content');
@@ -81,9 +120,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Присвоение содержимого переменной target
         targetWord = data.randomValue.toLowerCase();
+        listWord = data.list;
+        isWordPresent = listWord.some(subArray => subArray.includes(targetWord.toUpperCase()));
         maxWordLength = targetWord.length; // Длина слова
         console.log('Target:', targetWord);
-
+        console.log('JOK:', isWordPresent);
+      
         createBoard();
 
     } catch (error) {
@@ -181,58 +223,90 @@ function handleBackspace() {
 // Проверка текущей попытки
 function checkGuess() {
   if (currentGuess.length !== maxWordLength) {
-    message.textContent = "Введите полное слово!";
+    modalHead.textContent = 'Не хватает букв'
+    modalInfo.textContent = "Введите полное слово!";
+    modalWindow.style.display = 'block';
     return;
   }
 
-  const feedback = [];
-  const targetWordArray = targetWord.split(""); // Массив из символов targetWord
-  const guessedLettersUsed = Array(maxWordLength).fill(false); // Флаги использования букв
-  
-  // Первая проверка: буквы на правильных местах
-  for (let i = 0; i < maxWordLength; i++) {
-    if (currentGuess[i].toLowerCase() === targetWord[i]) {
-      feedback[i] = "correct";
-      guessedLettersUsed[i] = true; // Помечаем букву как использованную
-    }
-  }
+  if (!listWord.some(subArray => subArray.includes(currentGuess.toUpperCase()))) {
+    modalHead.textContent = 'Нет такого слова'
+    modalInfo.textContent = "В нашем словаре";
+    modalWindow.style.display = 'block';
+    return
+    
+  } else {
 
-  // Вторая проверка: буквы, присутствующие в слове, но не на своем месте
-  for (let i = 0; i < maxWordLength; i++) {
-    if (!feedback[i]) { // Если не "correct"
-      const charIndex = targetWordArray.findIndex(
-        (char, index) => char === currentGuess[i] && !guessedLettersUsed[index]
-      );
-      if (charIndex !== -1) {
-        feedback[i] = "present";
-        guessedLettersUsed[charIndex] = true; // Помечаем эту букву как использованную
-      } else {
-        feedback[i] = "absent";
+    const feedback = [];
+    const targetWordArray = targetWord.split(""); // Массив из символов targetWord
+    const guessedLettersUsed = Array(maxWordLength).fill(false); // Флаги использования букв
+    
+    // Первая проверка: буквы на правильных местах
+    for (let i = 0; i < maxWordLength; i++) {
+      if (currentGuess[i].toLowerCase() === targetWord[i]) {
+        feedback[i] = "correct";
+        guessedLettersUsed[i] = true; // Помечаем букву как использованную
       }
     }
+
+    // Вторая проверка: буквы, присутствующие в слове, но не на своем месте
+    for (let i = 0; i < maxWordLength; i++) {
+      if (!feedback[i]) { // Если не "correct"
+        const charIndex = targetWordArray.findIndex(
+          (char, index) => char === currentGuess[i] && !guessedLettersUsed[index]
+        );
+        if (charIndex !== -1) {
+          feedback[i] = "present";
+          guessedLettersUsed[charIndex] = true; // Помечаем эту букву как использованную
+        } else {
+          feedback[i] = "absent";
+        }
+      }
+    }
+
+    // Обновление строки и клавиатуры
+    updateRow(feedback);
+    updateKeyboard(feedback);
+
+    // После завершения анимации
+    const row = board.children[currentAttempt];
+    const cells = row.querySelectorAll(".cell");
+
+    let finishedAnimations = 0;
+    cells.forEach((cell, i) => {
+      const inner = cell.querySelector(".cell-inner");
+      inner.addEventListener(
+        "transitionend",
+        () => {
+          finishedAnimations++;
+          if (finishedAnimations === maxWordLength) {
+            if (currentGuess === targetWord) {
+              // Показ модального окна после анимации
+              modalHead.textContent = "Поздравляем!";
+              modalInfo.textContent = "Вы угадали слово";
+              modalWindow.style.display = "block";
+              launchFireworks();
+              return;
+            }
+
+            if (currentAttempt === attempts - 1) {
+              modalHead.textContent = "Вы проиграли!";
+              modalInfo.textContent = `Слово было: ${targetWord}`;
+              modalWindow.style.display = "block";
+              return;
+            }
+
+            // Переход к следующей попытке
+            currentAttempt++;
+            currentGuess = "";
+          }
+        },
+        { once: true } // Срабатывает только один раз для каждой ячейки
+      );
+    });
   }
-
-  console.log(feedback)
-  updateRow(feedback);
-  updateKeyboard(feedback);
-
-  if (currentGuess === targetWord) {
-    modalHead.textContent = "Поздравляем!";
-    modalInfo.textContent = "Вы угадали слово";
-    modalWindow.style.display = 'block'
-    return;
-  }
-
-  if (currentAttempt === attempts - 1) {
-    modalHead.textContent = 'Вы проиграли!' 
-    modalInfo.textContent = `Слово было: ${targetWord}`;
-    modalWindow.style.display = 'block'
-    return;
-  }
-
-  currentAttempt++;
-  currentGuess = "";
 }
+
 
 function updateRow(feedback) {
   const row = board.children[currentAttempt];
