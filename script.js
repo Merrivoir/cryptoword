@@ -3,6 +3,10 @@ const gasURL = "https://script.google.com/macros/s/AKfycbyxhETGvMWEiFfHP6FRzxxtw
 const board = document.getElementById("board");
 const keyboardContainer = document.getElementById("keyboard");
 const message = document.getElementById("message");
+const modalWindow = document.getElementById("myModal");
+const modalHead = document.getElementById("modal-head");
+const modalInfo = document.getElementById("modal-info");
+const closeBtn = document.querySelector(".close");
 
 //Переменные для игрового поля
 let currentAttempt = 0; // Текущая попытка
@@ -11,6 +15,31 @@ let targetWord = ""; // Загаданное
 let maxWordLength;
 const attempts = 6; // Количество попыток
 
+// Создание клетки с анимацией переворота
+function createCell() {
+  const cell = document.createElement("div");
+  cell.classList.add("cell");
+
+  // Контейнер для передней и задней стороны
+  const inner = document.createElement("div");
+  inner.classList.add("cell-inner");
+
+  // Передняя сторона карточки
+  const front = document.createElement("div");
+  front.classList.add("cell-front");
+  inner.appendChild(front);
+
+  // Задняя сторона карточки
+  const back = document.createElement("div");
+  back.classList.add("cell-back");
+  inner.appendChild(back);
+
+  // Вставляем контейнер внутрь карточки
+  cell.appendChild(inner);
+
+  return cell;
+}
+
 // Создаем игровое поле
 function createBoard() {
   for (let i = 0; i < attempts; i++) {
@@ -18,8 +47,7 @@ function createBoard() {
     row.classList.add("row");
 
     for (let j = 0; j < maxWordLength; j++) {
-      const cell = document.createElement("div");
-      cell.classList.add("cell");
+      const cell = createCell();
       row.appendChild(cell);
     }
 
@@ -33,7 +61,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     const serverResponse = document.getElementById('server-response');
 
     // Показать сообщение о загрузке
-    loading.style.display = 'block';
+    modalHead.textContent = 'Загрузка...'
+    modalWindow.style.display = 'block';
 
     // URL вашего веб-приложения Google Apps Script
     const url = gasURL;
@@ -48,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const data = await response.json();
 
         // Получение ответа от сервера
-        loading.style.display = 'none';
+        modalWindow.style.display = 'none';
 
         // Присвоение содержимого переменной target
         targetWord = data.randomValue.toLowerCase();
@@ -113,8 +142,19 @@ function handleKeyPress(letter) {
   if (currentGuess.length < maxWordLength) {
     const row = board.children[currentAttempt];
     const cell = row.children[currentGuess.length];
-    cell.textContent = letter;
+
+    const front = cell.querySelector(".cell-front");
+    const back = cell.querySelector(".cell-back");
+
+    // Добавляем букву на переднюю сторону (для визуального эффекта до переворота)
+    front.textContent = letter.toUpperCase();
+
+    // Добавляем букву в заднюю сторону (для отображения после переворота)
+    back.textContent = letter.toUpperCase();
+
+    // Обновляем текущую попытку
     currentGuess += letter.toLowerCase();
+    console.log(currentGuess)
   }
 }
 
@@ -123,7 +163,17 @@ function handleBackspace() {
   if (currentGuess.length > 0) {
     const row = board.children[currentAttempt];
     const cell = row.children[currentGuess.length - 1];
-    cell.textContent = "";
+
+    // Сбрасываем содержимое передней и задней сторон
+    const front = cell.querySelector(".cell-front");
+    const back = cell.querySelector(".cell-back");
+
+    if (front && back) {
+      front.textContent = ""; // Очищаем текст на передней стороне
+      back.textContent = ""; // Очищаем текст на задней стороне
+    }
+    
+    // Убираем последнюю букву из текущей догадки
     currentGuess = currentGuess.slice(0, -1);
   }
 }
@@ -141,7 +191,7 @@ function checkGuess() {
   
   // Первая проверка: буквы на правильных местах
   for (let i = 0; i < maxWordLength; i++) {
-    if (currentGuess[i] === targetWord[i]) {
+    if (currentGuess[i].toLowerCase() === targetWord[i]) {
       feedback[i] = "correct";
       guessedLettersUsed[i] = true; // Помечаем букву как использованную
     }
@@ -162,16 +212,21 @@ function checkGuess() {
     }
   }
 
+  console.log(feedback)
   updateRow(feedback);
   updateKeyboard(feedback);
 
   if (currentGuess === targetWord) {
-    message.textContent = "Поздравляем! Вы угадали слово!";
+    modalHead.textContent = "Поздравляем!";
+    modalInfo.textContent = "Вы угадали слово";
+    modalWindow.style.display = 'block'
     return;
   }
 
   if (currentAttempt === attempts - 1) {
-    message.textContent = `Вы проиграли! Слово было: ${targetWord}`;
+    modalHead.textContent = 'Вы проиграли!' 
+    modalInfo.textContent = `Слово было: ${targetWord}`;
+    modalWindow.style.display = 'block'
     return;
   }
 
@@ -181,9 +236,25 @@ function checkGuess() {
 
 function updateRow(feedback) {
   const row = board.children[currentAttempt];
+  
   feedback.forEach((status, i) => {
     const cell = row.children[i];
-    cell.classList.add(status);
+    const inner = cell.querySelector(".cell-inner");
+    const back = cell.querySelector(".cell-back");
+
+    // Устанавливаем текст на задней стороне карточки
+    back.textContent = currentGuess[i].toUpperCase();
+
+    // Добавляем класс анимации
+    setTimeout(() => {
+      inner.classList.add("flip");
+      back.classList.add(status);
+
+      // После завершения анимации переворота, добавляем статус
+      inner.addEventListener("transitionend", () => {
+        //back.classList.add(status);
+      }, { once: true });
+    }, i * 300); // Добавляем задержку для последовательного переворота
   });
 }
 
@@ -214,5 +285,20 @@ document.addEventListener("keydown", (e) => {
     handleBackspace();
   } else if (/^[а-яёА-ЯЁ]$/.test(e.key)) {
     handleKeyPress(e.key.toUpperCase());
+  }
+});
+
+// Функция для закрытия модального окна
+function closeModal() {
+  modalWindow.style.display = "none";
+}
+
+// Закрытие по клику на крестик
+closeBtn.addEventListener("click", closeModal);
+
+// Закрытие по клику на свободное пространство
+window.addEventListener("click", (event) => {
+  if (event.target === modalWindow) {
+    closeModal();
   }
 });
