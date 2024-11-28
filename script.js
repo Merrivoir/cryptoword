@@ -196,7 +196,7 @@ function handleKeyPress(letter) {
 
     // Обновляем текущую попытку
     currentGuess += letter.toLowerCase();
-    console.log(currentGuess)
+    //console.log(currentGuess)
   }
 }
 
@@ -221,6 +221,7 @@ function handleBackspace() {
 }
 
 // Проверка текущей попытки
+
 function checkGuess() {
   if (currentGuess.length !== maxWordLength) {
     modalHead.textContent = 'Не хватает букв'
@@ -238,8 +239,8 @@ function checkGuess() {
   } else {
 
     const feedback = [];
-    const targetWordArray = targetWord.split(""); // Массив из символов targetWord
-    const guessedLettersUsed = Array(maxWordLength).fill(false); // Флаги использования букв
+    const targetWordArray = targetWord.split(""); // Массив из символов 
+    const guessedLettersUsed = Array(maxWordLength).fill(false); // Флаги использованных букв
     
     // Первая проверка: буквы на правильных местах
     for (let i = 0; i < maxWordLength; i++) {
@@ -248,6 +249,8 @@ function checkGuess() {
         guessedLettersUsed[i] = true; // Помечаем букву как использованную
       }
     }
+    // сколько раз буква встречается в слове
+
 
     // Вторая проверка: буквы, присутствующие в слове, но не на своем месте
     for (let i = 0; i < maxWordLength; i++) {
@@ -307,6 +310,86 @@ function checkGuess() {
   }
 }
 
+/*
+function checkGuess() {
+  if (currentGuess.length !== maxWordLength) {
+    modalHead.textContent = 'Не хватает букв'
+    modalInfo.textContent = "Введите полное слово!";
+    modalWindow.style.display = 'block';
+    return;
+  }
+
+  if (!listWord.some(subArray => subArray.includes(currentGuess.toUpperCase()))) {
+    modalHead.textContent = 'Нет такого слова'
+    modalInfo.textContent = "В нашем словаре";
+    modalWindow.style.display = 'block';
+    return
+    
+  } else {
+
+  const feedback = [];
+  const targetWordArray = targetWord.split("");
+  const guessedLettersUsed = Array(maxWordLength).fill(false); // Флаги использования букв
+  const targetLetterCounts = {}; // Считаем количество каждой буквы в targetWord
+  const guessLetterCounts = {}; // Считаем буквы, угаданные корректно
+  
+  // Подсчет количества каждой буквы в targetWord
+  targetWordArray.forEach((char) => {
+    targetLetterCounts[char] = (targetLetterCounts[char] || 0) + 1;
+  });
+
+  // Первая проверка: буквы на правильных местах
+  for (let i = 0; i < maxWordLength; i++) {
+    if (currentGuess[i].toLowerCase() === targetWord[i]) {
+      feedback[i] = "correct";
+      guessedLettersUsed[i] = true; // Помечаем букву как использованную
+      guessLetterCounts[currentGuess[i]] = (guessLetterCounts[currentGuess[i]] || 0) + 1;
+    }
+  }
+
+  // Вторая проверка: буквы, присутствующие в слове, но не на своем месте
+  for (let i = 0; i < maxWordLength; i++) {
+    if (!feedback[i]) { // Если не "correct"
+      const currentChar = currentGuess[i];
+      const charIndex = targetWordArray.findIndex(
+        (char, index) => char === currentChar && !guessedLettersUsed[index]
+      );
+
+      if (
+        charIndex !== -1 && 
+        (guessLetterCounts[currentChar] || 0) < targetLetterCounts[currentChar]
+      ) {
+        feedback[i] = "present";
+        guessedLettersUsed[charIndex] = true; // Помечаем эту букву как использованную
+        guessLetterCounts[currentChar] = (guessLetterCounts[currentChar] || 0) + 1;
+      } else {
+        feedback[i] = "absent";
+      }
+    }
+  }
+
+  console.log(feedback);
+  updateRow(feedback);
+  updateKeyboard(feedback);
+
+  if (currentGuess === targetWord) {
+    modalHead.textContent = "Поздравляем!";
+    modalInfo.textContent = "Вы угадали слово";
+    modalWindow.style.display = "block";
+    return;
+  }
+
+  if (currentAttempt === attempts - 1) {
+    modalHead.textContent = "Вы проиграли!";
+    modalInfo.textContent = `Слово было: ${targetWord}`;
+    modalWindow.style.display = "block";
+    return;
+  }
+
+  currentAttempt++;
+  currentGuess = "";
+}}
+*/
 
 function updateRow(feedback) {
   const row = board.children[currentAttempt];
@@ -337,16 +420,21 @@ function updateRow(feedback) {
 // Обновление клавиатуры с подсветкой
 function updateKeyboard(feedback) {
   const keys = document.querySelectorAll(".key");
+
   currentGuess.split("").forEach((letter, index) => {
-    const key = Array.from(keys).find((k) => k.dataset.letter === letter.toUpperCase());
-    if (feedback[index] === "correct") {
-      key.className = 'key'
-      key.classList.add("correct");
-    } else if (feedback[index] === "present") {
-      key.classList.add("present");
-    } else {
-      key.classList.add("used");
-    }
+    setTimeout(() => {
+      const key = Array.from(keys).find((k) => k.dataset.letter === letter.toUpperCase());
+      if (key) {
+        if (feedback[index] === "correct") {
+          key.className = "key"; // Убираем предыдущие классы
+          key.classList.add("correct");
+        } else if (feedback[index] === "present") {
+          key.classList.add("present");
+        } else {
+          key.classList.add("used");
+        }
+      }
+    }, index * 300); // Задержка в 300 мс для синхронизации с updateRow
   });
 }
 
@@ -375,6 +463,13 @@ closeBtn.addEventListener("click", closeModal);
 // Закрытие по клику на свободное пространство
 window.addEventListener("click", (event) => {
   if (event.target === modalWindow) {
+    closeModal();
+  }
+});
+
+// Закрытие по нажатию клавиши Escape
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" || event.key === "Esc") { // Проверка на клавишу Escape
     closeModal();
   }
 });
