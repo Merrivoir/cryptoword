@@ -3,9 +3,43 @@ body {
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
-h1 {
+header {
+  width: 96%;
+  max-width: 480px;
+  margin: auto;
+  gap: 4px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
   text-align: center;
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  border-bottom: #0000007e solid 1px;
+  padding-bottom: 20px;
+}
+
+h1 {
+  margin: 0;
+}
+
+.flex-auto {
+	flex: 1 1 auto;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.tracking-wider {
+	letter-spacing: .05em;
+}
+
+.flex-none {
+	flex: none;
+}
+
+svg {
+  height: 1.5em;
+  width: 1.5em;
 }
 
 .board {
@@ -23,7 +57,7 @@ h1 {
 .row {
   display: flex;
   gap: 4px;
-  justify-content: space-between; /* Равномерное распределение пространства */
+  justify-content: center; /* Равномерное распределение пространства */
   align-items: center;
   width: 100%;
   border: none
@@ -158,20 +192,31 @@ h1 {
 }
 
 /* Контент внутри модального окна */
+
 .modal-content {
-  background-color: white;
-  margin: 15% auto; /* Центрируем по вертикали */
-  padding: 20px;
-  border-radius: 10px;
-  width: 50%; /* Ширина окна */
-  text-align: center;
+	background-color: white;
+	margin: auto;
+	padding: 8px;
+	border-radius: 10px;
+	width: 50vw;
+  max-width: 300px;
+	text-align: center;
+	height: 30vw;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#modal-head {
+  padding: 14px;
 }
 
 /* Кнопка закрытия */
 .close {
   color: #aaa;
   float: right;
-  font-size: 28px;
+  font-size: 18px;
   font-weight: bold;
   cursor: pointer;
 }
