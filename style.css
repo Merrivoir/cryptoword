@@ -1,20 +1,43 @@
 /* Игровое поле */
 body {
   font-family: 'Clear Sans', 'Helvetica Neue', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+div#game {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2%;
+}
+
+.hd {
+	position: fixed;
+	top: 0px;
+	z-index: 900;
+	width: 100%;
+	border-bottom: #ccc solid 1px;
+	background-color: white;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 header {
-  width: 96%;
-  max-width: 480px;
-  margin: auto;
-  gap: 4px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  text-align: center;
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  border-bottom: #0000007e solid 1px;
-  padding-bottom: 20px;
+	display: flex;
+	flex-direction: row;
+	gap: 4px;
+	justify-content: space-between;
+	text-align: center;
+	font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+	width: 96%;
+	margin: 2% auto;
+}
+
+.button {
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 32px;
 }
 
 h1 {
@@ -48,7 +71,7 @@ svg {
   align-items: center;
   gap: 5px;
   justify-content: center;
-  margin: 20px auto;
+  margin: 60px 0 auto;
   min-width: 180px; /* Фиксированная ширина */
   max-width: 400px;
 }
@@ -176,6 +199,15 @@ svg {
 .key.present {
   background-color: #c9b458;
   color: white;
+}
+
+[data-action="Enter"], [data-action="Backspace"] {
+  display: flex;
+}
+
+img {
+  width: 24px;
+  margin: auto;
 }
 
 /* Основной фон модального окна (полупрозрачный фон) */

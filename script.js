@@ -1,19 +1,26 @@
 const gasURL = "https://script.google.com/macros/s/AKfycbyxhETGvMWEiFfHP6FRzxxtwtwHUTNqwBLOEv47aObKVYNXsYTuD5WLUvj-D1Il4uhv/exec"
-const parameters = {
-  idWord: 'id'
-}
 
-const board = document.getElementById("board");
-const keyboardContainer = document.getElementById("keyboard");
-const message = document.getElementById("message");
-const modalWindow = document.getElementById("myModal");
+const board = document.getElementById("board")
+const keyboardContainer = document.getElementById("keyboard")
+const message = document.getElementById("message")
+
+const modalWindow = document.getElementById("myModal")
 const modalContent = document.getElementsByClassName('modal-content')
-const modalHead = document.getElementById("modal-head");
-const modalInfo = document.getElementById("modal-info");
-const closeBtn = document.querySelector(".close");
+const modalHead = document.getElementById("modal-head")
+const modalInfo = document.getElementById("modal-info")
+const closeBtn = document.querySelector(".close")
+
 const statBtn = document.querySelector('[aria-label="stat"]')
-let listWord;
-let isWordPresent;
+statBtn.addEventListener("click", showStat)
+
+// Русская раскладка клавиатуры (3 ряда)
+const keyboardLayout = [
+  "ЙЦУКЕНГШЩЗХЪ".split(""), // Верхний ряд
+  "ФЫВАПРОЛДЖЭ".split(""),  // Средний ряд
+  ["⌫", "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", "Enter"], // Нижний ряд
+]
+
+let listWord
 
 //Переменные для игрового поля
 let currentAttempt = 0; // Текущая попытка
@@ -47,7 +54,49 @@ function createCell() {
   return cell;
 }
 
+//-----------------------------------------------------------------------------------------------------------------
+// Загружаем слово из словаря
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+  // Показать сообщение о загрузке
+  modalHead.textContent = 'Загрузка...'
+  modalInfo.textContent = 'Получаем информацию'
+  modalWindow.style.display = 'block';
+
+  try {
+      // Отправка GET-запроса и ожидание ответа
+      const response = await fetch(gasURL);
+      if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+      }
+      
+      const data = await response.json();
+
+      // Получение ответа от сервера
+      modalWindow.style.display = 'none';
+
+      // Присвоение содержимого переменной target
+      targetWord = data.word.toLowerCase();
+      listWord = data.allWords;
+      maxWordLength = targetWord.length; // Длина слова
+      console.log('Target:', targetWord);
+    
+      createBoard();
+      loadGame();
+      generateKeyboard();
+
+  } catch (error) {
+    // Скрыть сообщение о загрузке и показать сообщение об ошибке
+    console.error('Ошибка:', error);
+    modalHead.textContent = 'Ошибка'
+    modalInfo.textContent = 'Произошла ошибка при загрузке данных.';
+  }
+});
+
+//-----------------------------------------------------------------------------------------------------------------
 // Создаем игровое поле
+
 function createBoard() {
   for (let i = 0; i < attempts; i++) {
     const row = document.createElement("div");
@@ -62,6 +111,9 @@ function createBoard() {
   }
 }
 
+//-----------------------------------------------------------------------------------------------------------------
+// Загружаем статистику игрока
+
 async function loadGame() {
   console.log("Загрузка статистики...");
   const stats = JSON.parse(localStorage.getItem("gameStats")) || {
@@ -73,7 +125,7 @@ async function loadGame() {
 
   console.log(stats);
 
-  // Проверяем, совпадает ли `targetWord` с сохранённым `todayWord`
+  // Проверяем, совпадает ли targetWord с сохранённым todayWord
   if (
     stats.todayWord.toUpperCase() === targetWord.toUpperCase() &&
     stats.attempts &&
@@ -134,56 +186,6 @@ async function loadGame() {
   }
 }
 
-// ожидание загрузки слова из словаря
-document.addEventListener('DOMContentLoaded', async () => {
-
-    // Показать сообщение о загрузке
-    modalHead.textContent = 'Загрузка...'
-    modalInfo.textContent = 'Получаем информацию'
-    modalWindow.style.display = 'block';
-
-    // URL вашего веб-приложения Google Apps Script
-    const url = gasURL;
-
-    try {
-        // Отправка GET-запроса и ожидание ответа
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
-        }
-        
-        const data = await response.json();
-
-        // Получение ответа от сервера
-        modalWindow.style.display = 'none';
-
-        // Присвоение содержимого переменной target
-        targetWord = data.word.toLowerCase();
-        listWord = data.allWords;
-        isWordPresent = listWord.some(subArray => subArray.includes(targetWord.toUpperCase()));
-        maxWordLength = targetWord.length; // Длина слова
-        console.log('Target:', targetWord);
-        console.log('JOK:', isWordPresent);
-      
-        createBoard();
-        loadGame();
-        generateKeyboard();
-
-    } catch (error) {
-      // Скрыть сообщение о загрузке и показать сообщение об ошибке
-      console.error('Ошибка:', error);
-      modalHead.textContent = 'Ошибка'
-      modalInfo.textContent = 'Произошла ошибка при загрузке данных.';
-    }
-});
-
-// Русская раскладка клавиатуры (3 ряда)
-const keyboardLayout = [
-  "ЙЦУКЕНГШЩЗХЪ".split(""), // Верхний ряд
-  "ФЫВАПРОЛДЖЭ".split(""),  // Средний ряд
-  ["⌫", "Я", "Ч", "С", "М", "И", "Т", "Ь", "Б", "Ю", "Enter"], // Нижний ряд
-];
-
 //-----------------------------------------------------------------------------------------------------------------
 // Генерация экранной клавиатуры
 
@@ -196,16 +198,20 @@ function generateKeyboard() {
       if(letter === "⌫") {
         const backspaceKey = document.createElement("div");
         backspaceKey.classList.add("key", "special-key");
-        backspaceKey.textContent = "⌫";
         backspaceKey.dataset.action = "Backspace";
         backspaceKey.addEventListener("click", handleBackspace);
+        const backImg = document.createElement("img")
+        backImg.setAttribute("src", "icon/backspace.svg")
+        backspaceKey.appendChild(backImg)
         row.appendChild(backspaceKey);
       } else if(letter === "Enter") {
         const enterKey = document.createElement("div");
         enterKey.classList.add("key", "special-key");
-        enterKey.textContent = "Enter";
         enterKey.dataset.action = "Enter";
         enterKey.addEventListener("click", checkGuess);
+        const enterImg = document.createElement("img")
+        enterImg.setAttribute("src", "icon/enter.svg")
+        enterKey.appendChild(enterImg)
         row.appendChild(enterKey);
       } else {
         const key = document.createElement("div");
@@ -295,8 +301,6 @@ function checkGuess() {
         guessedLettersUsed[i] = true; // Помечаем букву как использованную
       }
     }
-    // сколько раз буква встречается в слове
-
 
     // Вторая проверка: буквы, присутствующие в слове, но не на своем месте
     for (let i = 0; i < maxWordLength; i++) {
@@ -332,6 +336,7 @@ function checkGuess() {
             if (currentGuess === targetWord) {
               // Показ модального окна после анимации
               console.log(`Конец игры ${new Date(Date.now())}`)
+              saveAttempt(currentGuess, feedback);
               modalHead.textContent = "Поздравляем!";
               modalInfo.textContent = "Вы угадали слово";
               modalWindow.style.display = "block";
@@ -342,6 +347,7 @@ function checkGuess() {
 
             if (currentAttempt === attempts - 1) {
               console.log(`Конец игры ${new Date(Date.now())}`)
+              saveAttempt(currentGuess, feedback);
               modalHead.textContent = "Вы проиграли!";
               modalInfo.textContent = `Слово было: ${targetWord}`;
               modalWindow.style.display = "block";
@@ -350,9 +356,9 @@ function checkGuess() {
             }
 
             // Переход к следующей попытке
-            saveAttempt(currentGuess, feedback);
-            currentAttempt++;
-            currentGuess = "";
+            saveAttempt(currentGuess, feedback)
+            currentAttempt++
+            currentGuess = ""
           }
         },
         { once: true } // Срабатывает только один раз для каждой ячейки
@@ -362,6 +368,7 @@ function checkGuess() {
 }
 
 //-----------------------------------------------------------------------------------------------------------------
+// Обновление игрового поля
 
 function updateRow(feedback) {
   const row = board.children[currentAttempt];
@@ -390,8 +397,8 @@ function updateRow(feedback) {
 }
 
 //-----------------------------------------------------------------------------------------------------------------
-
 // Обновление клавиатуры с подсветкой
+
 function updateKeyboard(feedback) {
   const keys = document.querySelectorAll(".key");
 
@@ -412,7 +419,10 @@ function updateKeyboard(feedback) {
   });
 }
 
+
+//-----------------------------------------------------------------------------------------------------------------
 // Обработка ввода с клавиатуры
+
 document.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     checkGuess();
@@ -423,10 +433,7 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-statBtn.addEventListener("click", showStat);
-
 //-----------------------------------------------------------------------------------------------------------------
-
 // Функция для закрытия модального окна
 function closeModal() {
   modalWindow.style.display = "none";
