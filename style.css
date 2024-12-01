@@ -39,7 +39,8 @@ header {
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 32px;
+  width: 36px;
+  height: 36px;
 }
 
 h1 {
@@ -57,11 +58,6 @@ h1 {
 .tracking-wider {
 	letter-spacing: .05em;
   font-size: clamp(12px, 5vw, 24px); 
-}
-
-svg {
-  height: 1.5em;
-  width: 1.5em;
 }
 
 .board {
@@ -225,37 +221,39 @@ img {
 /* Контент внутри модального окна */
 
 .modal-content {
-	background-color: white;
-	margin: auto;
-	padding: 8px;
-	border-radius: 10px;
-	width: 50vw;
-  max-width: 300px;
-	text-align: center;
-	height: 30vw;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+  
+  display: flex; /* Позволяет использовать flexbox для удобного управления содержимым */
+  flex-direction: column; /* Располагает элементы внутри по вертикали */
+  align-items: center; /* Выравнивает содержимое по горизонтали */
+  justify-content: flex-start; /* Выравнивает содержимое по вертикали */
+  background-color: #fff; /* Цвет фона модального окна */
+  border-radius: 10px; /* Скругление углов */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для объема */
+  overflow: auto; /* Показывать прокрутку, если содержимое больше окна */
+  box-sizing: border-box; /* Учитывать padding и border в размерах элемента */
+  margin: auto;
+  padding: 1.5%;
+  width: 50vw;
+  max-width: 400px;
+  text-align: center;
+  height: 40vw;
+  min-height: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
 }
 
+
 #modal-head {
-  padding: 14px;
+  padding: 0px;
 }
 
 /* Кнопка закрытия */
 .close {
-  color: #aaa;
-  float: right;
-  font-size: 18px;
-  font-weight: bold;
+  align-self: flex-end;
   cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
 }
 
 #fireworks-container {
