@@ -149,7 +149,7 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px; /* Расстояние между рядами */
+  gap: 6px; /* Расстояние между рядами */
   margin: 20px auto;
   width: 96%;
   max-width: 480px;
@@ -231,6 +231,7 @@ img {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для объема */
   overflow: auto; /* Показывать прокрутку, если содержимое больше окна */
   box-sizing: border-box; /* Учитывать padding и border в размерах элемента */
+  gap: 8px;
   margin: auto;
   padding: 1.5%;
   width: 50vw;
@@ -247,7 +248,7 @@ img {
 
 
 #modal-head {
-  padding: 0px;
+  margin-top: 0px;
 }
 
 /* Кнопка закрытия */
