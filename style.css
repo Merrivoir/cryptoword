@@ -155,6 +155,11 @@ h1 {
   max-width: 480px;
 }
 
+.disabled {
+  pointer-events: none; /* Отключает все события мыши */
+  opacity: 0.5; /* Делает контейнер полупрозрачным */
+}
+
 /* Ряд клавиатуры */
 .keyboard-row {
   display: flex;

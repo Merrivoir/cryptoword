@@ -1,22 +1,20 @@
 //-----------------------------------------------------------------------------------------------------------------
 // Обновление статистики по завершении игры
-function updateGameStats(isWin, word) {
+function updateGameStats(word) {
   // Загружаем текущую статистику из localStorage
   const stats = loadStat()
-  
-  // Обновляем победы или поражения
-  if (isWin) {
-    stats.wins += 1;
-  } else {
-    stats.losses += 1;
-  }
 
   // Слово сегодняшнего дня
   stats.today.word = word
+  
+  const toHist = {
+    word: word,
+    date: startGame,
+    attempts: stats.today.attempts
+  }
   // Добавляем в исторические данные
-  stats.history.date = getCurrentFormattedDate()
-  stats.history.word = word
-  stats.history.attempts = stats.today.attempts
+  stats.history.push(toHist) 
+  stats.today.attempts = []
   
   // Сохраняем обновлённую статистику обратно в localStorage
   localStorage.setItem("gameStats", JSON.stringify(stats));
@@ -24,12 +22,12 @@ function updateGameStats(isWin, word) {
 
 //-----------------------------------------------------------------------------------------------------------------
 // Сохранение текущей попытки
-function saveAttempt(guess, feedback) {
+function saveAttempt(guess, feedback, timestamp) {
   // Загружаем текущую статистику из localStorage
   const stats = loadStat()
   
   // Добавляем текущую попытку
-  stats.today.attempts.push({ guess, feedback });
+  stats.today.attempts.push({ guess, feedback, timestamp });
   
   // Сохраняем обновлённую статистику
   localStorage.setItem("gameStats", JSON.stringify(stats));
@@ -42,17 +40,11 @@ function loadStat () {
   // Загружаем статистику из хранилища или создаем новую
   const stats = JSON.parse(localStorage.getItem("gameStats")) || {
     newUser: true,
-    wins: 0,
-    losses: 0,
     today: {
       word: "",
       attempts: [],
     },
-    history: {
-      date: "",
-      word: "",
-    attempts: [],
-    }
+    history: []
   }
     return stats
 }

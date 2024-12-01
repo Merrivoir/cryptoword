@@ -15,13 +15,28 @@ function getCurrentFormattedDate() {
 }
 
 //-----------------------------------------------------------------------------------------------------------------
+// Отключение клавиатуры
+function disableKeyboardEvents() {
+    document.addEventListener('keydown', function(event) {
+      event.preventDefault(); // Предотвращает стандартное поведение
+      event.stopImmediatePropagation(); // Предотвращает дальнейшее распространение события
+    }, true); // Параметр true указывает на фазу захвата
+}
+
+//-----------------------------------------------------------------------------------------------------------------
 // Функция для показа статистики
 function showStat() {
     const stats = loadStat()
+    const count = document.createElement('span');
+    count.classList.add("wal");
+    count.textContent = `Ваш результат: ${stats.wins} побед`; // Добавляем текст
 
-    modalHead.textContent = 'Ваша статистика'
-    modalInfo.innerHTML = `Побед: ${stats.wins}<br>Поражений: ${stats.losses}`
-    modalWindow.style.display = 'block'
+    modalHead.textContent = 'Ваша статистика';
+
+    modalInfo.innerHTML = ''; // Очистка старого содержимого, если необходимо
+    modalInfo.appendChild(count);
+
+    modalWindow.style.display = 'block';
   }
 
 //-----------------------------------------------------------------------------------------------------------------

@@ -87,13 +87,15 @@ async function loadGame() {
     
     board.classList.add("disabled"); // Блокируем игровое 
     keyboardContainer.classList.add("disabled")
+    disableKeyboardEvents()
     modalHead.textContent = "Игра завершена.";
     modalInfo.innerHTML = "На сегодня все<br>Приходите завтра";
     modalWindow.style.display = "block";
     
     // Восстанавливаем попытки по порядку
-    for (let attemptIndex = 0; attemptIndex < stats.today.attempts.length; attemptIndex++) {
-      const attempt = stats.today.attempts[attemptIndex];
+    let lastElement = stats.history.at(-1) // Получаем данные последнего дня
+    for (let attemptIndex = 0; attemptIndex < lastElement.attempts.length; attemptIndex++) {
+      const attempt = lastElement.attempts[attemptIndex];
       const row = board.children[attemptIndex];
 
       for (let letterIndex = 0; letterIndex < attempt.guess.length; letterIndex++) {
@@ -105,6 +107,8 @@ async function loadGame() {
         back.textContent = letter.toUpperCase();
 
         // Добавляем класс с анимацией переворота
+        updateKeyboard(attempt.guess, attempt.feedback)
+
         await new Promise((resolve) => {
           setTimeout(() => {
             back.classList.add(attempt.feedback[letterIndex]);
@@ -113,28 +117,13 @@ async function loadGame() {
           }, 200); // Задержка для анимации
         });
       }
-
-      // Обновляем клавиатуру после обработки ряда
-      attempt.guess.split("").forEach((letter, letterIndex) => {
-        const keys = document.querySelectorAll(".key");
-        const key = Array.from(keys).find(
-          (k) => k.dataset.letter === letter.toUpperCase()
-        );
-
-        if (key) {
-          // Обновляем цвет кнопки в зависимости от 
-          key.classList.remove("absent", "present")
-          key.classList.add("used")
-          key.classList.add(attempt.feedback[letterIndex]);
-        }
-      });
-
       // Задержка между рядами
       await new Promise((resolve) => setTimeout(resolve, 200)); // Задержка перед следующим рядом
     }
 
   } else {
     console.log(`Старт игры ${new Date(Date.now())}`);
+    startGame = new Date()
   }
 }
 
@@ -240,20 +229,21 @@ function handleBackspace() {
 // Проверка текущей попытки
 function checkGuess() {
   if (currentGuess.length !== maxWordLength) {
+
     modalHead.textContent = 'Не хватает букв'
     modalInfo.textContent = "Введите полное слово!";
     modalWindow.style.display = 'block';
     return;
-  }
 
-  if (!listWord.includes(currentGuess.toUpperCase())) {
+  } else if (!listWord.includes(currentGuess.toUpperCase())) {
+
     modalHead.textContent = 'Нет такого слова'
     modalInfo.textContent = "В нашем словаре";
     modalWindow.style.display = 'block';
     return
     
   } else {
-
+    const timestamp = new Date()
     const feedback = [];
     const targetWordArray = targetWord.split(""); // Массив из символов 
     const guessedLettersUsed = Array(maxWordLength).fill(false); // Флаги использованных букв
@@ -283,7 +273,7 @@ function checkGuess() {
 
     // Обновление строки и клавиатуры
     updateRow(feedback);
-    updateKeyboard(feedback);
+    updateKeyboard(currentGuess, feedback);
 
     // После завершения анимации
     const row = board.children[currentAttempt];
@@ -298,28 +288,28 @@ function checkGuess() {
           finishedAnimations++;
           if (finishedAnimations === maxWordLength) {
             if (currentGuess === targetWord) {
-              saveAttempt(currentGuess, feedback)
-              console.log(`Конец игры ${new Date(Date.now())}`)
+              saveAttempt(currentGuess, feedback, timestamp)
+              console.log(`Конец игры ${timestamp}`)
               modalHead.textContent = "Поздравляем!"; // Показ модального окна после анимации
               modalInfo.textContent = "Вы угадали слово";
               modalWindow.style.display = "block";
               launchFireworks();
-              updateGameStats(true, targetWord);
+              updateGameStats(targetWord);
               return;
             }
 
             if (currentAttempt === attempts - 1) {
-              saveAttempt(currentGuess, feedback);
-              console.log(`Конец игры ${new Date(Date.now())}`)
+              saveAttempt(currentGuess, feedback, timestamp);
+              console.log(`Конец игры ${timestamp}`)
               modalHead.textContent = "Вы проиграли!"; // Показ модального окна после анимации
               modalInfo.textContent = `Слово было: ${targetWord}`;
               modalWindow.style.display = "block";
-              updateGameStats(false, targetWord);
+              updateGameStats(targetWord);
               return;
             }
 
             // Переход к следующей попытке
-            saveAttempt(currentGuess, feedback)
+            saveAttempt(currentGuess, feedback, timestamp)
             currentAttempt++
             currentGuess = ""
           }
@@ -362,10 +352,10 @@ function updateRow(feedback) {
 //-----------------------------------------------------------------------------------------------------------------
 // Обновление клавиатуры с подсветкой
 
-function updateKeyboard(feedback) {
+function updateKeyboard(guess, feedback) {
   const keys = document.querySelectorAll(".key");
 
-  currentGuess.split("").forEach((letter, index) => {
+  guess.split("").forEach((letter, index) => {
     setTimeout(() => {
       const key = Array.from(keys).find((k) => k.dataset.letter === letter.toUpperCase());
       if (key) {
