@@ -1,6 +1,6 @@
 // API запросы
 const gasURL = "https://script.google.com/macros/s/AKfycbyxhETGvMWEiFfHP6FRzxxtwtwHUTNqwBLOEv47aObKVYNXsYTuD5WLUvj-D1Il4uhv/exec"
-
+const testURL = 'https://webhook.site/f5ed5f62-1fa3-4bc6-8a90-05fc1da52c93'
 const board = document.getElementById("board") // Игровое поле
 const keyboardContainer = document.getElementById("keyboard") // Игровая клавиатура
 
@@ -27,9 +27,10 @@ const keyboardLayout = [
 ]
 
 //Переменные для игрового процесса
-let listWord // Список слов в словаре
-let startGame
+let userName = ""; // Имя пользователя
+let listWord  = [] // Список слов в словаре
+let startGame = new Date();
 let currentAttempt = 0; // Текущая попытка
 let currentGuess = ""; // Слово, которое вводится
 let targetWord = ""; // Загаданное слово
-let maxWordLength; // Длина слова
+let maxWordLength = 0; // Длина слова

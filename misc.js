@@ -29,7 +29,7 @@ function showStat() {
     const stats = loadStat()
     const count = document.createElement('span');
     count.classList.add("wal");
-    count.textContent = `Ваш результат: ${stats.wins} побед`; // Добавляем текст
+    count.textContent = `Ваш результат: (в разработке) побед`; // Добавляем текст
 
     modalHead.textContent = 'Ваша статистика';
 
@@ -40,10 +40,30 @@ function showStat() {
   }
 
 //-----------------------------------------------------------------------------------------------------------------
+// Функция для анализа статистики
+function dataAnalysis() {
+  return loadStat()
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// Функция для показа заглушки
+function showBlank() {
+  modalHead.textContent = 'Упс...';
+  modalInfo.textContent = 'Это еще разрабатывается'; // Очистка старого содержимого, если необходимо;
+  modalWindow.style.display = 'block';
+}
+
+//-----------------------------------------------------------------------------------------------------------------
 // Функция для закрытия модального окна
 function closeModal() {
     modalWindow.style.display = "none";
 }
+
+// Кнопки в разработке
+rulesBtn.addEventListener("click", showBlank)
+settingsBtn.addEventListener("click", showBlank)
+newBtn.addEventListener("click", showBlank)
+
 
 // Показать статистику
 statBtn.addEventListener("click", showStat)

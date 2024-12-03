@@ -1,11 +1,12 @@
 //-----------------------------------------------------------------------------------------------------------------
 // Обновление статистики по завершении игры
-function updateGameStats(word) {
+function updateGameStats(word, date) {
   // Загружаем текущую статистику из localStorage
   const stats = loadStat()
 
   // Слово сегодняшнего дня
   stats.today.word = word
+  stats.today.date = date
   
   const toHist = {
     word: word,
@@ -13,8 +14,9 @@ function updateGameStats(word) {
     attempts: stats.today.attempts
   }
   // Добавляем в исторические данные
-  stats.history.push(toHist) 
-  stats.today.attempts = []
+  stats.history.push(toHist)
+
+  // Отправка статистики на сервер (надо дописать функцию)
   
   // Сохраняем обновлённую статистику обратно в localStorage
   localStorage.setItem("gameStats", JSON.stringify(stats));
@@ -39,12 +41,59 @@ function saveAttempt(guess, feedback, timestamp) {
 function loadStat () {
   // Загружаем статистику из хранилища или создаем новую
   const stats = JSON.parse(localStorage.getItem("gameStats")) || {
-    newUser: true,
+    user: true,
     today: {
+      date: "",
       word: "",
       attempts: [],
     },
     history: []
   }
     return stats
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// Отправка статистики на сервер
+function sendStatsToServer(urlReq) {
+  const url = urlReq
+  const stat = loadStat()
+  const user = "testuser"; // Замените на нужное значение
+  
+  stat.user = user
+
+  /*const urlEncodedData = new URLSearchParams(
+    Object.fromEntries(
+      Object.entries(stat).map(([key, value]) => [
+        key,
+        typeof value === "object" ? JSON.stringify(value) : value,
+      ])
+    )
+  ).toString();*/
+  
+  const urlEncodedData = new URLSearchParams({
+    today: JSON.stringify(stat.today),
+    user: JSON.stringify(stat.user),
+  }).toString();
+
+  // console.log(urlEncodedData)
+
+  // Используем fetch для отправки POST-запроса
+  fetch(url, {
+    method: "post",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: urlEncodedData,
+  })
+    .then((response) => {
+      if (!response.ok) {
+        console.log("Статистика отправлена без подтверждения со стороны сервера");
+      } else {
+      console.log("Статистика успешно отправлена!");
+      }
+    })
+    .catch((error) => {
+      console.error("Ошибка при отправке статистики:", error);
+    });
 }

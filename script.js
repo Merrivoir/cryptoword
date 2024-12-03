@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       modalWindow.style.display = 'none';
       
       const stats = loadStat()
-      if(stats.newUser){
-        stats.newUser = false
+      if(stats.user){
+        stats.user = false
         localStorage.setItem("gameStats", JSON.stringify(stats))
         modalHead.textContent = "Приветствую"
         modalInfo.textContent = "Знаете правила?"
@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       targetWord = data.word.toLowerCase();
       listWord = data.allWords;
       maxWordLength = targetWord.length // Длина слова
-      console.log('Target:', targetWord)
 
       createBoard()
       generateKeyboard()
@@ -93,9 +92,9 @@ async function loadGame() {
     modalWindow.style.display = "block";
     
     // Восстанавливаем попытки по порядку
-    let lastElement = stats.history.at(-1) // Получаем данные последнего дня
-    for (let attemptIndex = 0; attemptIndex < lastElement.attempts.length; attemptIndex++) {
-      const attempt = lastElement.attempts[attemptIndex];
+    let attempts = stats.today.attempts // Получаем данные последнего дня
+    for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
+      const attempt = attempts[attemptIndex];
       const row = board.children[attemptIndex];
 
       for (let letterIndex = 0; letterIndex < attempt.guess.length; letterIndex++) {
@@ -122,8 +121,11 @@ async function loadGame() {
     }
 
   } else {
-    console.log(`Старт игры ${new Date(Date.now())}`);
+    stats.today.attempts = [];
     startGame = new Date()
+    stats.today.date = startGame;
+    localStorage.setItem("gameStats", JSON.stringify(stats));
+    console.log(`Старт игры ${startGame}`);
   }
 }
 
@@ -200,7 +202,6 @@ function handleKeyPress(letter) {
 
     // Обновляем текущую попытку
     currentGuess += letter.toLowerCase();
-    //console.log(currentGuess)
   }
 }
 
@@ -294,7 +295,8 @@ function checkGuess() {
               modalInfo.textContent = "Вы угадали слово";
               modalWindow.style.display = "block";
               launchFireworks();
-              updateGameStats(targetWord);
+              updateGameStats(targetWord, startGame);
+              sendStatsToServer(gasURL);
               return;
             }
 
@@ -304,7 +306,8 @@ function checkGuess() {
               modalHead.textContent = "Вы проиграли!"; // Показ модального окна после анимации
               modalInfo.textContent = `Слово было: ${targetWord}`;
               modalWindow.style.display = "block";
-              updateGameStats(targetWord);
+              updateGameStats(targetWord, startGame);
+              sendStatsToServer(gasURL);
               return;
             }
 
@@ -339,7 +342,6 @@ function updateRow(feedback) {
     setTimeout(() => {
       inner.classList.add("flip");
       back.classList.add(status);
-      
 
       // После завершения анимации переворота, добавляем статус
       inner.addEventListener("transitionend", () => {
