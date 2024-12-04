@@ -47,10 +47,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       const stats = loadStat()
 
       if(stats.user === true) {
-        localStorage.setItem("gameStats", JSON.stringify(stats))
         await hello()
       }
-      
+
       gameHead.textContent = stats.user
 
       // Присвоение содержимого переменной target

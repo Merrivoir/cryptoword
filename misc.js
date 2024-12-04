@@ -17,14 +17,18 @@ async function hello() {
 
   function submitName() {
     const userName = nameField.value.trim();
-    if (!userName) {
-      alert("Пожалуйста, введите имя!");
+    const nameRegex = /^[a-zA-Zа-яА-Я]+$/;
+    if (!userName || !nameRegex.test(userName)) {
+      alert("Пожалуйста, введите корректное имя! Имя должно состоять только из букв и не содержать спецсимволов или цифр.");
       return;
     }
+    
     closeModal();
     console.log("Имя пользователя:", userName);
     const stat = loadStat();
-    stat.user = userName; localStorage.setItem("gameStats", JSON.stringify(stat));
+    stat.user = userName;
+    gameHead.textContent = userName;
+    localStorage.setItem("gameStats", JSON.stringify(stat));
     
     // Дополнительно: выполнить действия с именем
     gameHead.textContent = userName
