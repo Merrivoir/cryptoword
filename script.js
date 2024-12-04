@@ -43,15 +43,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await response.json() // Получение ответа от сервера
 
       modalWindow.style.display = 'none';
-      
       const stats = loadStat()
 
       if(stats.user === true) {
         await hello()
+      } else {
+        gameHead.textContent = stats.user
       }
-
-      gameHead.textContent = stats.user
-
+      
       // Присвоение содержимого переменной target
       targetWord = data.word.toLowerCase();
       listWord = data.allWords;
@@ -83,8 +82,9 @@ async function loadGame() {
     stats.today.word.toUpperCase() === targetWord.toUpperCase()) {
     console.log("Игра уже началась. Загружаем состояние...");
     
-    board.classList.add("disabled"); // Блокируем игровое 
-    keyboardContainer.classList.add("disabled")
+    // Блокируем игровое поле и клавиатуру
+    board.classList.add("disabled"); 
+    keyboardContainer.classList.add("disabled");
     disableKeyboardEvents()
     modalHead.textContent = "Игра завершена.";
     modalInfo.innerHTML = "На сегодня все<br>Приходите завтра";

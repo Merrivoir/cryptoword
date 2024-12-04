@@ -25,9 +25,16 @@ async function hello() {
     
     closeModal();
     console.log("Имя пользователя:", userName);
-    const stat = loadStat();
-    stat.user = userName;
     gameHead.textContent = userName;
+
+    const stat = loadStat();
+    console.log("Загрузка из локального хранилища")
+    console.log(stat.user)
+
+    stat.user = userName;
+    console.log("обновленное имя")
+    console.log(stat.user)
+    
     localStorage.setItem("gameStats", JSON.stringify(stat));
     
     // Дополнительно: выполнить действия с именем
@@ -50,13 +57,22 @@ async function hello() {
   modalWindow.style.display = "block"
 });
 }
+
 //-----------------------------------------------------------------------------------------------------------------
-// Отключение клавиатуры
+// Отключение и включение клавиатуры
 function disableKeyboardEvents() {
     document.addEventListener('keydown', function(event) {
       event.preventDefault(); // Предотвращает стандартное поведение
       event.stopImmediatePropagation(); // Предотвращает дальнейшее распространение события
     }, true); // Параметр true указывает на фазу захвата
+}
+
+function enableKeyboardEvents() {
+  // Находим все обработчики событий и удаляем их
+  document.removeEventListener('keydown', function(event) {
+    event.preventDefault(); // Предотвращает стандартное поведение
+    event.stopImmediatePropagation(); // Предотвращает дальнейшее распространение события
+  }, true);
 }
 
 //-----------------------------------------------------------------------------------------------------------------
