@@ -45,13 +45,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       modalWindow.style.display = 'none';
       
       const stats = loadStat()
-      if(stats.user){
-        stats.user = false
+
+      if(stats.user === true) {
         localStorage.setItem("gameStats", JSON.stringify(stats))
-        modalHead.textContent = "Приветствую"
-        modalInfo.textContent = "Знаете правила?"
-        modalWindow.style.display = "block"
+        await hello()
       }
+      
+      gameHead.textContent = stats.user
 
       // Присвоение содержимого переменной target
       targetWord = data.word.toLowerCase();

@@ -1,19 +1,51 @@
-function getCurrentFormattedDate() {
-    const now = new Date();
+async function hello() {
+  return new Promise((resolve) => {
+  modalInfo.textContent = ""
+  const labelInfo = document.createElement("label")
+  labelInfo.setAttribute("for", "userName");
+  labelInfo.textContent = "Напишите ваше имя:";
   
-    // Получаем компоненты даты и времени
-    const day = String(now.getDate()).padStart(2, "0");
-    const month = String(now.getMonth() + 1).padStart(2, "0"); // Месяцы начинаются с 0
-    const year = now.getFullYear();
+  const nameField = document.createElement("input")
+  nameField.type = "text";
+  nameField.id = "userName";
+  nameField.name = "userName";
+  nameField.placeholder = "Имя";
   
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    const seconds = String(now.getSeconds()).padStart(2, "0");
-  
-    // Формируем строку в нужном формате
-    return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
-}
+  const nameSend = document.createElement("button")
+  nameSend.id = "submitButton";
+  nameSend.textContent = "Отправить";
 
+  function submitName() {
+    const userName = nameField.value.trim();
+    if (!userName) {
+      alert("Пожалуйста, введите имя!");
+      return;
+    }
+    closeModal();
+    console.log("Имя пользователя:", userName);
+    const stat = loadStat();
+    stat.user = userName; localStorage.setItem("gameStats", JSON.stringify(stat));
+    
+    // Дополнительно: выполнить действия с именем
+    gameHead.textContent = userName
+    resolve(); // Разрешение промиса после ввода имени
+  }
+  
+  nameSend.addEventListener("click", submitName)
+  nameField.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      submitName();
+    }
+  });
+
+  modalHead.textContent = "Приветствую"
+  
+  modalInfo.appendChild(labelInfo)
+  modalInfo.appendChild(nameField)
+  modalInfo.appendChild(nameSend)
+  modalWindow.style.display = "block"
+});
+}
 //-----------------------------------------------------------------------------------------------------------------
 // Отключение клавиатуры
 function disableKeyboardEvents() {

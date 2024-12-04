@@ -17,6 +17,9 @@ const newBtn = document.querySelector('[aria-label="new"]')
 const statBtn = document.querySelector('[aria-label="stat"]')
 const settingsBtn = document.querySelector('[aria-label="settings"]')
 
+// Заголовок
+const gameHead = document.getElementsByClassName('tracking-wider')[0]
+
 const attempts = 6; // Количество попыток
 
 // Русская раскладка клавиатуры (3 ряда)

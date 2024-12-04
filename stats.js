@@ -57,25 +57,17 @@ function loadStat () {
 function sendStatsToServer(urlReq) {
   const url = urlReq
   const stat = loadStat()
-  const user = "testuser"; // Замените на нужное значение
-  
-  stat.user = user
 
-  /*const urlEncodedData = new URLSearchParams(
+  const urlEncodedData = new URLSearchParams(
     Object.fromEntries(
       Object.entries(stat).map(([key, value]) => [
         key,
         typeof value === "object" ? JSON.stringify(value) : value,
       ])
     )
-  ).toString();*/
-  
-  const urlEncodedData = new URLSearchParams({
-    today: JSON.stringify(stat.today),
-    user: JSON.stringify(stat.user),
-  }).toString();
+  ).toString(); 
 
-  // console.log(urlEncodedData)
+  localStorage.setItem("gameStats", JSON.stringify(stat))
 
   // Используем fetch для отправки POST-запроса
   fetch(url, {

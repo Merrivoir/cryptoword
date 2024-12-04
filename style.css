@@ -251,9 +251,25 @@ img {
 
 }
 
+#modal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 
 #modal-head {
   margin-top: 0px;
+  margin-bottom: 8px;
+}
+
+#userName {
+  border: none;
+  border-bottom: #c0c0c0 solid 1px;
+}
+
+#submitButton {
+  background-color: #f0f0f0;
 }
 
 /* Кнопка закрытия */
