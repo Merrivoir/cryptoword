@@ -36,4 +36,5 @@ let startGame = new Date();
 let currentAttempt = 0; // Текущая попытка
 let currentGuess = ""; // Слово, которое вводится
 let targetWord = ""; // Загаданное слово
+let hint = "";
 let maxWordLength = 0; // Длина слова

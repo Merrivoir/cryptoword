@@ -34,7 +34,7 @@ async function hello() {
     stat.user = userName;
     console.log("обновленное имя")
     console.log(stat.user)
-    
+
     localStorage.setItem("gameStats", JSON.stringify(stat));
     
     // Дополнительно: выполнить действия с именем
@@ -105,6 +105,13 @@ function showBlank() {
   modalWindow.style.display = 'block';
 }
 
+function showHint() {
+  modalHead.textContent = 'Подсказка';
+  modalInfo.textContent = hint; // Очистка старого содержимого, если необходимо;
+  modalWindow.style.display = 'block';
+}
+
+
 //-----------------------------------------------------------------------------------------------------------------
 // Функция для закрытия модального окна
 function closeModal() {
@@ -112,7 +119,7 @@ function closeModal() {
 }
 
 // Кнопки в разработке
-rulesBtn.addEventListener("click", showBlank)
+rulesBtn.addEventListener("click", showHint)
 settingsBtn.addEventListener("click", showBlank)
 newBtn.addEventListener("click", showBlank)
 

@@ -50,10 +50,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         gameHead.textContent = stats.user
       }
-      
+
       // Присвоение содержимого переменной target
       targetWord = data.word.toLowerCase();
       listWord = data.allWords;
+      hint = data.hint;
       maxWordLength = targetWord.length // Длина слова
 
       createBoard()
