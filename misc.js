@@ -3,13 +3,13 @@ async function hello() {
   modalInfo.textContent = ""
   const labelInfo = document.createElement("label")
   labelInfo.setAttribute("for", "userName");
-  labelInfo.textContent = "Напишите ваше имя:";
+  labelInfo.textContent = "Напишите ваш ник в Telegram:";
   
   const nameField = document.createElement("input")
   nameField.type = "text";
   nameField.id = "userName";
   nameField.name = "userName";
-  nameField.placeholder = "Имя";
+  nameField.placeholder = "Имя пользователя";
   
   const nameSend = document.createElement("button")
   nameSend.id = "submitButton";
@@ -17,9 +17,9 @@ async function hello() {
 
   function submitName() {
     const userName = nameField.value.trim();
-    const nameRegex = /^[a-zA-Zа-яА-Я]+$/;
+    const nameRegex = /^[0-9a-zA-Zа-яА-Я_]+$/;
     if (!userName || !nameRegex.test(userName)) {
-      alert("Пожалуйста, введите корректное имя! Имя должно состоять только из букв и не содержать спецсимволов или цифр.");
+      alert("Одно слово и оно должно состоять только из букв или цифр и не содержать спецсимволов");
       return;
     }
     
