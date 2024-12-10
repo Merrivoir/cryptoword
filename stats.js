@@ -42,6 +42,7 @@ function loadStat () {
   // Загружаем статистику из хранилища или создаем новую
   const stats = JSON.parse(localStorage.getItem("gameStats")) || {
     user: true,
+    hintcount: 3,
     today: {
       date: "",
       word: "",

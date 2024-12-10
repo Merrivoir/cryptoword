@@ -106,9 +106,16 @@ function showBlank() {
 }
 
 function showHint() {
-  modalHead.textContent = 'Подсказка';
-  modalInfo.textContent = hint; // Очистка старого содержимого, если необходимо;
-  modalWindow.style.display = 'block';
+
+  stat = loadStat()
+  if (stat.hintcount > 0 && hintFlag) {
+    modalHead.textContent = 'Подсказка';
+    modalInfo.textContent = hint; // Очистка старого содержимого, если необходимо;
+    modalWindow.style.display = 'block';
+  } else {
+
+  }
+
 }
 
 

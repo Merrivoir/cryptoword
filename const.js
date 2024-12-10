@@ -38,3 +38,4 @@ let currentGuess = ""; // Слово, которое вводится
 let targetWord = ""; // Загаданное слово
 let hint = "";
 let maxWordLength = 0; // Длина слова
+let hintFlag = false

@@ -29,8 +29,8 @@ function createCell() {
 document.addEventListener('DOMContentLoaded', async () => {
 
   // Показать сообщение о загрузке
-  modalHead.textContent = 'Загрузка...'
-  modalInfo.textContent = 'Получаем информацию'
+  modalHead.textContent = 'Загрузка'
+  modalInfo.innerHTML = '<div class="ld loader"><div class="ld bar1"></div><div class="ld bar2"></div><div class="ld bar3"></div><div class="ld bar4"></div><div class="ld bar5"></div><div class="ld bar6"></div><div class="ld bar7"></div>'
   modalWindow.style.display = 'block';
 
   try {
