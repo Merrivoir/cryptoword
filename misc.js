@@ -105,19 +105,32 @@ function showBlank() {
   modalWindow.style.display = 'block';
 }
 
+
 function showHint() {
 
-  stat = loadStat()
-  if (stat.hintcount > 0 && hintFlag) {
-    modalHead.textContent = 'Подсказка';
-    modalInfo.textContent = hint; // Очистка старого содержимого, если необходимо;
+  const hintsShown = JSON.parse(localStorage.getItem("hintsShown")) || {};
+  const stat = loadStat()
+  
+  // Проверяем, была ли подсказка уже показана для текущего слова
+  if (hintsShown[targetWord]) {
+    modalHead.textContent = 'Подсказка'
+    modalInfo.innerHTML = `Вы уже использовали подсказку для этого слова<br>Оставшихся подсказок: ${stat.hintcount}`;
     modalWindow.style.display = 'block';
-  } else {
-
+    return;
   }
+  
+  // Если подсказка ещё не показывалась, показываем её
+  stat.hintcount--
+  modalHead.textContent = 'Подсказка'
+  modalInfo.innerHTML = `${hint}<br>Оставшихся подсказок: ${stat.hintcount}`;
+  modalWindow.style.display = 'block';
+  
+  // Сохраняем информацию о том, что подсказка показана
+  hintsShown[targetWord] = true;
 
+  localStorage.setItem("hintsShown", JSON.stringify(hintsShown))
+  localStorage.setItem("gameStats", JSON.stringify(stat))
 }
-
 
 //-----------------------------------------------------------------------------------------------------------------
 // Функция для закрытия модального окна
