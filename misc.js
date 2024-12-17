@@ -118,6 +118,13 @@ function showHint() {
     modalWindow.style.display = 'block';
     return;
   }
+
+  if (stat.hintcount < 1) {
+    modalHead.textContent = 'Подсказка'
+    modalInfo.innerHTML = `Вы уже использовали все подсказки<br>Оставшихся подсказок: ${stat.hintcount}`;
+    modalWindow.style.display = 'block';
+    return;    
+  }
   
   // Если подсказка ещё не показывалась, показываем её
   stat.hintcount--
