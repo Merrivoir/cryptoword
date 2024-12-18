@@ -91,3 +91,49 @@ function sendStatsToServer(urlReq) {
       console.error("Ошибка при отправке статистики:", error);
     });
 }
+
+function calculateStats(stats) {
+  const allGames = stats.history; // Учитываем только history
+  
+  let wins = 0;
+  let losses = 0;
+  let totalAttempts = 0;
+  let totalAttemptTime = 0;
+  let totalAttemptsForWins = 0;
+
+  for (const game of allGames) {
+    const attempts = game.attempts;
+
+    // Количество попыток для текущей игры
+    totalAttempts += attempts.length;
+
+    // Проверка победы
+    const lastAttempt = attempts[attempts.length - 1];
+    if (lastAttempt.feedback.every(f => f === "correct")) {
+      wins++;
+      totalAttemptsForWins += attempts.length; // Учитываем попытки только для побед
+    } else {
+      losses++;
+    }
+
+    // Подсчёт времени всех попыток
+    for (let i = 0; i < attempts.length; i++) {
+      const startTime = new Date(attempts[i - 1]?.timestamp || game.date).getTime();
+      const endTime = new Date(attempts[i].timestamp).getTime();
+      totalAttemptTime += endTime - startTime;
+    }
+  }
+
+  // Среднее время на одну попытку
+  const averageAttemptTime = totalAttempts > 0 ? totalAttemptTime / totalAttempts : 0;
+
+  // Среднее количество попыток для побед
+  const averageAttemptsForWins = wins > 0 ? totalAttemptsForWins / wins : 0;
+
+  return {
+    wins,
+    losses,
+    averageAttemptTime: (averageAttemptTime / 1000).toFixed(2), // В секундах
+    averageAttemptsForWins: averageAttemptsForWins.toFixed(1) // Среднее количество попыток
+  }
+}

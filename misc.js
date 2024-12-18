@@ -78,10 +78,10 @@ function enableKeyboardEvents() {
 //-----------------------------------------------------------------------------------------------------------------
 // Функция для показа статистики
 function showStat() {
-    const stats = loadStat()
+    const stats = calculateStats(loadStat())
     const count = document.createElement('span');
     count.classList.add("wal");
-    count.textContent = `Ваш результат: (в разработке) побед`; // Добавляем текст
+    count.innerHTML = `<span>Побед: ${stats.wins}</span><span>Поражений: ${stats.losses}</span><span>Среднее количество попыток: ${stats.averageAttemptsForWins}</span><span>Средняя длительность попытки: ${stats.averageAttemptTime} сек</span>`; // Добавляем текст
 
     modalHead.textContent = 'Ваша статистика';
 

@@ -239,7 +239,7 @@ img {
   box-sizing: border-box; /* Учитывать padding и border в размерах элемента */
   gap: 8px;
   margin: auto;
-  padding: 1.5%;
+  padding: 2%;
   width: 50vw;
   max-width: 400px;
   text-align: center;
@@ -262,6 +262,13 @@ img {
 #modal-head {
   margin-top: 0px;
   margin-bottom: 8px;
+}
+
+.wal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: baseline;
 }
 
 #userName {
