@@ -81,7 +81,7 @@ function showStat() {
     const stats = calculateStats(loadStat())
     const count = document.createElement('span');
     count.classList.add("wal");
-    count.innerHTML = `<span>Побед: ${stats.wins}</span><span>Поражений: ${stats.losses}</span><span>Среднее количество попыток: ${stats.averageAttemptsForWins}</span><span>Средняя длительность попытки: ${stats.averageAttemptTime} сек</span>`; // Добавляем текст
+    count.innerHTML = `<span class="wstat">Побед: ${stats.wins}</span><span class="lstat">Поражений: ${stats.losses}</span><span class="attstat">Среднее количество попыток: ${stats.averageAttemptsForWins}</span><span class="atimestat">Средняя длительность попытки: ${stats.averageAttemptTime} сек</span>`; // Добавляем текст
 
     modalHead.textContent = 'Ваша статистика';
 
