@@ -1,6 +1,8 @@
 // API запросы
 const gasURL = "https://script.google.com/macros/s/AKfycbyxhETGvMWEiFfHP6FRzxxtwtwHUTNqwBLOEv47aObKVYNXsYTuD5WLUvj-D1Il4uhv/exec"
 const testURL = 'https://webhook.site/f5ed5f62-1fa3-4bc6-8a90-05fc1da52c93'
+
+// Игровое поле
 const board = document.getElementById("board") // Игровое поле
 const keyboardContainer = document.getElementById("keyboard") // Игровая клавиатура
 

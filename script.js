@@ -29,9 +29,7 @@ function createCell() {
 document.addEventListener('DOMContentLoaded', async () => {
 
   // Показать сообщение о загрузке
-  modalHead.textContent = 'Загрузка'
-  modalInfo.innerHTML = '<div class="ld loader"><div class="ld bar1"></div><div class="ld bar2"></div><div class="ld bar3"></div><div class="ld bar4"></div><div class="ld bar5"></div><div class="ld bar6"></div><div class="ld bar7"></div>'
-  modalWindow.style.display = 'block';
+  showLoad()
 
   try {
       // Отправка GET-запроса и ожидание ответа
@@ -86,11 +84,9 @@ async function loadGame() {
     // Блокируем игровое поле и клавиатуру
     board.classList.add("disabled"); 
     keyboardContainer.classList.add("disabled");
-    disableKeyboardEvents()
-    modalHead.textContent = "Игра завершена.";
-    modalInfo.innerHTML = "На сегодня все<br>Приходите завтра";
-    modalWindow.style.display = "block";
-    
+    //disableKeyboardEvents()
+    showTimer()
+  
     // Восстанавливаем попытки по порядку
     let attempts = stats.today.attempts // Получаем данные последнего дня
     for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
@@ -297,6 +293,7 @@ function checkGuess() {
               launchFireworks();
               updateGameStats(targetWord, startGame);
               sendStatsToServer(gasURL);
+              setTimeout(showStat(), 4)
               return;
             }
 

@@ -235,15 +235,16 @@ img {
   background-color: #fff; /* Цвет фона модального окна */
   border-radius: 10px; /* Скругление углов */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для объема */
-  overflow: auto; /* Показывать прокрутку, если содержимое больше окна */
+  overflow: hidden; /* Показывать прокрутку, если содержимое больше окна */
   box-sizing: border-box; /* Учитывать padding и border в размерах элемента */
-  gap: 8px;
+  gap: 8%;
   margin: auto;
   padding: 2%;
   width: 50vw;
   max-width: 400px;
+  min-width: 280px;
   text-align: center;
-  height: 20vw;
+  height: auto;
   min-height: 200px;
   position: absolute;
   top: 50%;
@@ -261,7 +262,11 @@ img {
 
 #modal-head {
   margin-top: 0px;
-  margin-bottom: 8px;
+  margin-bottom: 4%;
+}
+
+#timer {
+  font-size: 3em;
 }
 
 .wal {
@@ -271,13 +276,23 @@ img {
   align-items: baseline;
 }
 
-#userName {
+#userName, #word {
+  width: 100%;
+  height: 2em;
   border: none;
   border-bottom: #c0c0c0 solid 1px;
+  font-size: 1em;
 }
 
 #submitButton {
+  align-self: center;
+  width: 90%;
+  height: 2em;
   background-color: #f0f0f0;
+  margin: 1em auto;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 /* Кнопка закрытия */
@@ -301,9 +316,9 @@ img {
   position: absolute;
   width: 5px;
   height: 5px;
-  background: rgb(249, 227, 82);
+  background: rgb(242, 139, 36);
   border-radius: 50%;
-  animation: explode 1s ease-out forwards;
+  animation: explode 0.8s ease-out forwards;
 }
 
 @keyframes explode {
@@ -318,7 +333,7 @@ img {
 }
 
 .loader {
-  margin: 10px auto auto;
+  margin: 40% auto auto;
   width: 70px;
   height: 50px;
   text-align: center;

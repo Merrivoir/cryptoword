@@ -43,7 +43,6 @@ function loadStat () {
   const stats = JSON.parse(localStorage.getItem("gameStats")) || {
     user: true,
     hintcount: 3, // количество оставшихся подсказок
-    hintFlag: false, // подсказка не использована
     today: {
       date: "",
       word: "",
