@@ -45,10 +45,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Выводим параметры в консоль
   const params = { idWord: id }
-  console.log("ID слова в словаре:", idWord)
+  console.log("ID слова в словаре:", id)
   
   try {
       showLoad()
+
       if(id) {
         urlWithParams = `${gasURL}?${new URLSearchParams(params)}`
       } else {
@@ -66,6 +67,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Присвоение содержимого переменной target
       targetWord = data.word.toLowerCase();
+      console.log(targetWord)
       listWord = data.allWords;
       hint = data.hint;
       maxWordLength = targetWord.length // Длина слова
