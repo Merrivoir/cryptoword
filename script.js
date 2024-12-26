@@ -45,7 +45,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Выводим параметры в консоль
   const params = { idWord: id }
-  console.log("ID слова в словаре:", id)
   
   try {
       showLoad()
@@ -67,7 +66,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       // Присвоение содержимого переменной target
       targetWord = data.word.toLowerCase();
-      console.log(targetWord)
       listWord = data.allWords;
       hint = data.hint;
       maxWordLength = targetWord.length // Длина слова
@@ -395,32 +393,37 @@ function disableKeyboardEvents() {
 // Загрузка и анимация прошедшей игры
 
 async function todayGame(stats) {
-  
-  let attempts = stats.today.attempts // Получаем данные последнего дня
-  for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
-    const attempt = attempts[attemptIndex];
-    const row = board.children[attemptIndex];
+  console.log("Восстановление последней игры")
+  try {
+    let attempts = stats.today.attempts // Получаем данные последнего дня
+    console.log(`Попытки: ${attempts}`)
+    for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
+      const attempt = attempts[attemptIndex];
+      const row = board.children[attemptIndex];
 
-    for (let letterIndex = 0; letterIndex < attempt.guess.length; letterIndex++) {
-      const letter = attempt.guess[letterIndex];
-      const cell = row.children[letterIndex];
-      const inner = cell.querySelector(".cell-inner");
-      const back = cell.querySelector(".cell-back");
+      for (let letterIndex = 0; letterIndex < attempt.guess.length; letterIndex++) {
+        const letter = attempt.guess[letterIndex];
+        const cell = row.children[letterIndex];
+        const inner = cell.querySelector(".cell-inner");
+        const back = cell.querySelector(".cell-back");
 
-      back.textContent = letter.toUpperCase();
+        back.textContent = letter.toUpperCase();
 
-      // Добавляем класс с анимацией переворота
-      updateKeyboard(attempt.guess, attempt.feedback)
+        // Добавляем класс с анимацией переворота
+        updateKeyboard(attempt.guess, attempt.feedback)
 
-      await new Promise((resolve) => {
-        setTimeout(() => {
-          back.classList.add(attempt.feedback[letterIndex]);
-          inner.classList.add("flip");
-          resolve();
-        }, 200); // Задержка для анимации
-      });
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            back.classList.add(attempt.feedback[letterIndex]);
+            inner.classList.add("flip");
+            resolve();
+          }, 200); // Задержка для анимации
+        });
+      }
+      // Задержка между рядами
+      await new Promise((resolve) => setTimeout(resolve, 200)); // Задержка перед следующим рядом
     }
-    // Задержка между рядами
-    await new Promise((resolve) => setTimeout(resolve, 200)); // Задержка перед следующим рядом
-  }  
+  } catch (error) {
+    console.error('Ошибка:', error);
+  }
 }
