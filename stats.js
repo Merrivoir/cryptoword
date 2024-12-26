@@ -15,6 +15,7 @@ function updateGameStats(word, date) {
   }
   // Добавляем в исторические данные
   stats.history.push(toHist)
+  stats.today.attempts = [];
 
   // Отправка статистики на сервер (надо дописать функцию)
   

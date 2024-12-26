@@ -100,7 +100,6 @@ async function loadGame() {
     todayGame(stats) // Восстанавливаем попытки
 
   } else {
-    stats.today.attempts = [];
     startGame = new Date()
     stats.today.date = startGame;
     localStorage.setItem("gameStats", JSON.stringify(stats));
@@ -393,10 +392,8 @@ function disableKeyboardEvents() {
 // Загрузка и анимация прошедшей игры
 
 async function todayGame(stats) {
-  console.log("Восстановление последней игры")
   try {
     let attempts = stats.today.attempts // Получаем данные последнего дня
-    console.log(`Попытки: ${attempts}`)
     for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
       const attempt = attempts[attemptIndex];
       const row = board.children[attemptIndex];
