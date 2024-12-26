@@ -314,7 +314,25 @@ async function showAddWord() {
 
 function showFriend(word, id) {
   modalHead.textContent = "Поделитесь ссылкой";
-  modalInfo.innerHTML = `<span class = "friend">Вы загадали слово: ${word.toUpperCase()}</span><span class = "link"><a href="https://merrivoir.github.io/cryptoword?ls=${id}">merrivoir.github.io/cryptoword?ls=${id}</a></span>`
+  modalInfo.innerHTML = `<span class = "friend">Вы загадали слово: ${word.toUpperCase()}</span><span id = "link">https://merrivoir.github.io/cryptoword?ls=${id}</span>`
+  const copyElement = document.getElementById('link');
+  copyElement.addEventListener('click', () => {
+    // Получаем текст из элемента
+    const textToCopy = copyElement.textContent;
+
+    // Копируем текст в буфер обмена
+    navigator.clipboard.writeText(textToCopy)
+      .then(() => {
+        // Успешное копирование
+        modalInfo.textContent = 'Ссылка скопирована в буфер обмена';
+        setTimeout(() => (modalInfo.textContent = 'Отправьте ссылку другу через мессенджер'), 2000); // Убираем сообщение через 2 секунды
+      })
+      .catch(err => {
+        // Обработка ошибок
+        modalInfo.textContent = 'Ошибка копирования!';
+        console.error('Ошибка копирования:', err);
+      });
+  });
   modalWindow.style.display = "block";
 }
 

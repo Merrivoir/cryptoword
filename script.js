@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         urlWithParams = gasURL
       }
-      console.log("url:", urlWithParams)
+       
       const response = await fetch(urlWithParams); // Отправка GET-запроса и ожидание ответа
       if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);

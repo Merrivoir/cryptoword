@@ -269,6 +269,10 @@ img {
   font-size: 3em;
 }
 
+#link {
+  cursor: pointer;
+}
+
 .wal {
   display: flex;
   flex-direction: column;
