@@ -113,7 +113,7 @@ function showHint() {
   // Если подсказка ещё не показывалась, показываем её
   stat.hintcount--
   modalHead.textContent = 'Подсказка'
-  modalInfo.innerHTML = `${hint}<br>Оставшихся подсказок: ${stat.hintcount}`;
+  modalInfo.innerHTML = `${hint.toUpperCase()}<br>Оставшихся подсказок: ${stat.hintcount}`;
   modalWindow.style.display = 'block';
   
   // Сохраняем информацию о том, что подсказка показана
@@ -127,6 +127,7 @@ function showHint() {
 // Функция для закрытия модального окна
 function closeModal() {
     modalWindow.style.display = "none";
+    enableKeyboardEvents()
 }
   
 // Закрытие по клику на крестик
@@ -199,12 +200,12 @@ function createFirework(x, y) {
 //Таймер до следующего слова 
 
 function updateCountdown() {
-  const now = new Date(); // Текущее время
-  const nextUpdate = new Date(); // Следующий момент 1:00
+  const now = new Date(); // Текущее локальное время
+  const nextUpdate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), -5, 27, 0, 0)); // Устанавливаем 01:00 UTC
 
-  nextUpdate.setHours(0, 27, 0, 0); // Устанавливаем 00:27
-  if (now >= nextUpdate) {
-    nextUpdate.setDate(nextUpdate.getDate() + 1); // Если текущее время прошло, берем следующий день
+  if (now > nextUpdate) {
+    // Если текущее время уже прошло -5:27 UTC, устанавливаем следующий день
+    nextUpdate.setUTCDate(nextUpdate.getUTCDate() + 1);
   }
 
   const diffMilliseconds = nextUpdate - now; // Разница в миллисекундах
@@ -246,8 +247,8 @@ function showTimer() {
 // Функция для показа добавления слова
 
 async function showAddWord() {
+  disableKeyboardEvents()
   return new Promise((resolve) => {
-    disableKeyboardEvents()
     modalInfo.textContent = ""
     const labelInfo = document.createElement("label")
     labelInfo.setAttribute("for", "userName");
@@ -281,9 +282,7 @@ async function showAddWord() {
         const result = await response.json(); // Ожидание ответа сервера
         console.log("Ответ сервера:", result.idWord);
 
-        // Скрытие модального окна
         closeModal();
-        disableKeyboardEvents()
         showFriend(word, result.idWord);
         resolve(); // Разрешение промиса после получения ответа
 
@@ -306,6 +305,7 @@ async function showAddWord() {
     modalInfo.appendChild(wordField)
     modalInfo.appendChild(wordSend)
     modalWindow.style.display = "block"
+    wordField.focus()
   })
 }
 

@@ -34,11 +34,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   } else {
     gameHead.textContent = stats.user
   }
+  
+  const queryString = window.location.search;
 
+  // Создаем объект URLSearchParams
+  const urlParams = new URLSearchParams(queryString);
+
+  // Считываем параметры
+  const idWord = urlParams.get("ls")
+
+  // Выводим параметры в консоль
+  const params = { idWord: idWord }
+  console.log("ID слова в словаре:", idWord)
+  
   try {
       showLoad()
-      // Отправка GET-запроса и ожидание ответа
-      const response = await fetch(gasURL);
+      
+      const urlWithParams = `${gasURL}?${new URLSearchParams(params)}`;
+      const response = await fetch(urlWithParams); // Отправка GET-запроса и ожидание ответа
       if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
       }
@@ -371,6 +384,9 @@ function disableKeyboardEvents() {
   // Сбрасываем ссылку, чтобы можно было активировать снова
   handleKeyDown = null;
 }
+
+//-----------------------------------------------------------------------------------------------------------------
+// Загрузка и анимация прошедшей игры
 
 async function todayGame(stats) {
   
