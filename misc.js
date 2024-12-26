@@ -201,10 +201,10 @@ function createFirework(x, y) {
 
 function updateCountdown() {
   const now = new Date(); // Текущее локальное время
-  const nextUpdate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), -5, 27, 0, 0)); // Устанавливаем 01:00 UTC
+  const nextUpdate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), -5, 13, 0, 0)); // Устанавливаем 01:00 UTC
 
   if (now > nextUpdate) {
-    // Если текущее время уже прошло -5:27 UTC, устанавливаем следующий день
+    // Если текущее время уже прошло -5: +13 UTC, устанавливаем следующий день
     nextUpdate.setUTCDate(nextUpdate.getUTCDate() + 1);
   }
 
