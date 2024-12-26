@@ -41,3 +41,4 @@ let targetWord = ""; // Загаданное слово
 let hint = "";
 let maxWordLength = 0; // Длина слова
 let hintFlag = false
+let handleKeyDown

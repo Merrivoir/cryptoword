@@ -28,10 +28,15 @@ function createCell() {
 
 document.addEventListener('DOMContentLoaded', async () => {
 
-  // Показать сообщение о загрузке
-  showLoad()
+  const stats = loadStat()
+  if(stats.user === true) {
+    await hello()
+  } else {
+    gameHead.textContent = stats.user
+  }
 
   try {
+      showLoad()
       // Отправка GET-запроса и ожидание ответа
       const response = await fetch(gasURL);
       if (!response.ok) {
@@ -41,13 +46,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await response.json() // Получение ответа от сервера
 
       modalWindow.style.display = 'none';
-      const stats = loadStat()
-
-      if(stats.user === true) {
-        await hello()
-      } else {
-        gameHead.textContent = stats.user
-      }
 
       // Присвоение содержимого переменной target
       targetWord = data.word.toLowerCase();
@@ -71,50 +69,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 // Загружаем статистику игрока
 
 async function loadGame() {
-  console.log("Загрузка статистики...");
+  console.log("Загрузка статистики из хранилища");
   const stats = loadStat()
 
   console.log(stats);
 
   // Проверяем, совпадает ли targetWord с сохранённым todayWord
-  if (
-    stats.today.word.toUpperCase() === targetWord.toUpperCase()) {
+  if (stats.today.word.toUpperCase() === targetWord.toUpperCase()) {
     console.log("Игра уже началась. Загружаем состояние...");
     
-    // Блокируем игровое поле и клавиатуру
-    board.classList.add("disabled"); 
-    keyboardContainer.classList.add("disabled");
-    //disableKeyboardEvents()
-    showTimer()
-  
-    // Восстанавливаем попытки по порядку
-    let attempts = stats.today.attempts // Получаем данные последнего дня
-    for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
-      const attempt = attempts[attemptIndex];
-      const row = board.children[attemptIndex];
-
-      for (let letterIndex = 0; letterIndex < attempt.guess.length; letterIndex++) {
-        const letter = attempt.guess[letterIndex];
-        const cell = row.children[letterIndex];
-        const inner = cell.querySelector(".cell-inner");
-        const back = cell.querySelector(".cell-back");
-
-        back.textContent = letter.toUpperCase();
-
-        // Добавляем класс с анимацией переворота
-        updateKeyboard(attempt.guess, attempt.feedback)
-
-        await new Promise((resolve) => {
-          setTimeout(() => {
-            back.classList.add(attempt.feedback[letterIndex]);
-            inner.classList.add("flip");
-            resolve();
-          }, 200); // Задержка для анимации
-        });
-      }
-      // Задержка между рядами
-      await new Promise((resolve) => setTimeout(resolve, 200)); // Задержка перед следующим рядом
-    }
+    gamePause(true) // Блокируем игровое поле и клавиатуру
+    showTimer() // Показываем таймер до следующего слова
+    todayGame(stats) // Восстанавливаем попытки
 
   } else {
     stats.today.attempts = [];
@@ -122,6 +88,7 @@ async function loadGame() {
     stats.today.date = startGame;
     localStorage.setItem("gameStats", JSON.stringify(stats));
     console.log(`Старт игры ${startGame}`);
+    enableKeyboardEvents();
   }
 }
 
@@ -373,14 +340,65 @@ function updateKeyboard(guess, feedback) {
 
 
 //-----------------------------------------------------------------------------------------------------------------
-// Обработка ввода с клавиатуры
+// Отключение и включение синхронизации экранной и реальной клавиатур
 
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    checkGuess();
-  } else if (e.key === "Backspace") {
-    handleBackspace();
-  } else if (/^[а-яёА-ЯЁ]$/.test(e.key)) {
-    handleKeyPress(e.key.toUpperCase());
-  }
-});
+function enableKeyboardEvents() {
+  // Проверяем, нет ли уже активированного обработчика
+  if (handleKeyDown) return;
+
+  // Определяем обработчик
+  handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      checkGuess();
+    } else if (e.key === "Backspace") {
+      handleBackspace();
+    } else if (/^[а-яёА-ЯЁ]$/.test(e.key)) {
+      handleKeyPress(e.key.toUpperCase());
+    }
+  };
+
+  // Добавляем обработчик
+  document.addEventListener("keydown", handleKeyDown);
+}
+
+function disableKeyboardEvents() {
+  // Проверяем, есть ли активный обработчик
+  if (!handleKeyDown) return;
+
+  // Удаляем обработчик
+  document.removeEventListener("keydown", handleKeyDown);
+
+  // Сбрасываем ссылку, чтобы можно было активировать снова
+  handleKeyDown = null;
+}
+
+async function todayGame(stats) {
+  
+  let attempts = stats.today.attempts // Получаем данные последнего дня
+  for (let attemptIndex = 0; attemptIndex < attempts.length; attemptIndex++) {
+    const attempt = attempts[attemptIndex];
+    const row = board.children[attemptIndex];
+
+    for (let letterIndex = 0; letterIndex < attempt.guess.length; letterIndex++) {
+      const letter = attempt.guess[letterIndex];
+      const cell = row.children[letterIndex];
+      const inner = cell.querySelector(".cell-inner");
+      const back = cell.querySelector(".cell-back");
+
+      back.textContent = letter.toUpperCase();
+
+      // Добавляем класс с анимацией переворота
+      updateKeyboard(attempt.guess, attempt.feedback)
+
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          back.classList.add(attempt.feedback[letterIndex]);
+          inner.classList.add("flip");
+          resolve();
+        }, 200); // Задержка для анимации
+      });
+    }
+    // Задержка между рядами
+    await new Promise((resolve) => setTimeout(resolve, 200)); // Задержка перед следующим рядом
+  }  
+}

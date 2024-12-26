@@ -136,3 +136,8 @@ function calculateStats(stats) {
     averageAttemptsForWins: averageAttemptsForWins.toFixed(1) // Среднее количество попыток
   }
 }
+
+function erase() {
+  localStorage.removeItem("gameStats")
+  console.log("Статистика пользователя удалена из локального хранилища")
+}

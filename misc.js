@@ -17,29 +17,28 @@ async function hello() {
 
   function submitName() {
     const userName = nameField.value.trim();
-    const nameRegex = /^[0-9a-zA-Zа-яА-Я_]+$/;
+    const nameRegex = /^[0-9a-zA-Zа-яА-Я_]{3,}$/;
+
     if (!userName || !nameRegex.test(userName)) {
       alert("Одно слово и оно должно состоять только из букв или цифр и не содержать спецсимволов");
-      return;
-    }
+    } else {
     
     closeModal();
     console.log("Имя пользователя:", userName);
     gameHead.textContent = userName;
 
-    const stat = loadStat();
+    const stats = loadStat();
     console.log("Загрузка из локального хранилища")
-    console.log(stat.user)
+    console.log(stats.user)
 
-    stat.user = userName;
-    console.log("обновленное имя")
-    console.log(stat.user)
+    stats.user = userName;
 
-    localStorage.setItem("gameStats", JSON.stringify(stat));
+    localStorage.setItem("gameStats", JSON.stringify(stats));
     
     // Дополнительно: выполнить действия с именем
     gameHead.textContent = userName
     resolve(); // Разрешение промиса после ввода имени
+    }
   }
   
   nameSend.addEventListener("click", submitName)
@@ -56,23 +55,6 @@ async function hello() {
   modalInfo.appendChild(nameSend)
   modalWindow.style.display = "block"
 });
-}
-
-//-----------------------------------------------------------------------------------------------------------------
-// Отключение и включение клавиатуры
-function disableKeyboardEvents() {
-    document.addEventListener('keydown', function(event) {
-      event.preventDefault(); // Предотвращает стандартное поведение
-      event.stopImmediatePropagation(); // Предотвращает дальнейшее распространение события
-    }, true); // Параметр true указывает на фазу захвата
-}
-
-function enableKeyboardEvents() {
-  // Находим все обработчики событий и удаляем их
-  document.removeEventListener('keydown', function(event) {
-    event.preventDefault(); // Предотвращает стандартное поведение
-    event.stopImmediatePropagation(); // Предотвращает дальнейшее распространение события
-  }, true);
 }
 
 //-----------------------------------------------------------------------------------------------------------------
@@ -265,8 +247,8 @@ function showTimer() {
 
 async function showAddWord() {
   return new Promise((resolve) => {
+    disableKeyboardEvents()
     modalInfo.textContent = ""
-    enableKeyboardEvents()
     const labelInfo = document.createElement("label")
     labelInfo.setAttribute("for", "userName");
     labelInfo.textContent = "Загадайте слово для друга";
@@ -301,11 +283,12 @@ async function showAddWord() {
 
         // Скрытие модального окна
         closeModal();
+        disableKeyboardEvents()
         showFriend(word, result.idWord);
         resolve(); // Разрешение промиса после получения ответа
 
       } catch (error) {
-        alert("Произошла ошибка при отправке слова. Попробуйте еще раз.");
+        showAlert("Произошла ошибка или такого слова нет в словаре. Проверьте и попробуйте еще раз.");
         console.error("Ошибка:", error);
       }
     }
@@ -333,4 +316,26 @@ function showFriend(word, id) {
   modalHead.textContent = "Поделитесь ссылкой";
   modalInfo.innerHTML = `<span class = "friend">Вы загадали слово: ${word.toUpperCase()}</span><span class = "link"><a href="https://merrivoir.github.io/cryptoword?ls=${id}">merrivoir.github.io/cryptoword?ls=${id}</a></span>`
   modalWindow.style.display = "block";
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// Функция для показа ссылки
+
+function showAlert(text) {
+  modalHead.textContent = "Ошибка";
+  modalInfo.innerHTML = `<span class = "alert">${text}</span>`
+  modalWindow.style.display = "block";
+}
+
+//-----------------------------------------------------------------------------------------------------------------
+// Функция для показа ссылки
+
+function gamePause(off = true) {
+  if(off) {
+    board.classList.add("disabled"); 
+    keyboardContainer.classList.add("disabled");
+  } else {
+    board.classList.remove("disabled"); 
+    keyboardContainer.classList.remove("disabled");  
+  }
 }
