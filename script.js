@@ -41,16 +41,20 @@ document.addEventListener('DOMContentLoaded', async () => {
   const urlParams = new URLSearchParams(queryString);
 
   // Считываем параметры
-  const idWord = urlParams.get("ls")
+  const id = urlParams.get("ls")
 
   // Выводим параметры в консоль
-  const params = { idWord: idWord }
+  const params = { idWord: id }
   console.log("ID слова в словаре:", idWord)
   
   try {
       showLoad()
+      if(id) {
+        urlWithParams = `${gasURL}?${new URLSearchParams(params)}`
+      } else {
+        urlWithParams = gasURL
+      }
       
-      const urlWithParams = `${gasURL}?${new URLSearchParams(params)}`;
       const response = await fetch(urlWithParams); // Отправка GET-запроса и ожидание ответа
       if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
