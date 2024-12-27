@@ -162,7 +162,7 @@ statBtn.addEventListener("click", showStat)
 function createFirework(x, y) {
     const fireworkContainer = document.getElementById("fireworks-container");
   
-    for (let i = 0; i < 40; i++) { // 20 частиц в одном фейерверке
+    for (let i = 0; i < 40; i++) { // 40 частиц в одном фейерверке
         const firework = document.createElement("div");
         firework.classList.add("firework");
   
@@ -244,7 +244,7 @@ function showTimer() {
 }
 
 //-----------------------------------------------------------------------------------------------------------------
-// Функция для показа добавления слова
+// Функция для добавления слова
 
 async function showAddWord() {
   disableKeyboardEvents()
@@ -318,7 +318,7 @@ function showFriend(word, id) {
   const copyElement = document.getElementById('link');
   copyElement.addEventListener('click', () => {
     // Получаем текст из элемента
-    const textToCopy = copyElement.textContent;
+    const textToCopy = `Попробуйте отгадать слово\n${copyElement.textContent}`;
 
     // Копируем текст в буфер обмена
     navigator.clipboard.writeText(textToCopy)
