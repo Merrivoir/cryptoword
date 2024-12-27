@@ -27,7 +27,7 @@ function createCell() {
 // Загружаем слово из словаря
 
 document.addEventListener('DOMContentLoaded', async () => {
-
+  disableKeyboardEvents()
   const stats = loadStat()
   if(stats.user === true) {
     await hello()
@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       createBoard()
       generateKeyboard()
       loadGame()
+      enableKeyboardEvents()
 
   } catch (error) {
     // Скрыть сообщение о загрузке и показать сообщение об ошибке

@@ -127,7 +127,6 @@ function showHint() {
 // Функция для закрытия модального окна
 function closeModal() {
     modalWindow.style.display = "none";
-    enableKeyboardEvents()
 }
   
 // Закрытие по клику на крестик
@@ -284,6 +283,7 @@ async function showAddWord() {
 
         closeModal();
         showFriend(word, result.idWord);
+        enableKeyboardEvents()
         resolve(); // Разрешение промиса после получения ответа
 
       } catch (error) {
