@@ -8,6 +8,7 @@ function updateGameStats(word, date) {
   stats.today.word = word
   stats.today.date = date
   
+  
   const toHist = {
     word: word,
     date: startGame,
@@ -15,6 +16,7 @@ function updateGameStats(word, date) {
   }
   // Добавляем в исторические данные
   stats.history.push(toHist)
+  stats.today.attempts = []
 
   // Отправка статистики на сервер (надо дописать функцию)
   
@@ -140,4 +142,21 @@ function calculateStats(stats) {
 function erase() {
   localStorage.removeItem("gameStats")
   console.log("Статистика пользователя удалена из локального хранилища")
+}
+
+function updateTodayAttempts(stat) {
+
+  // Ищем в history запись с таким же словом
+  const matchingEntry = stat.history.find(entry => entry.word === targetWord)
+  console.log("Попытки:")
+  console.log(matchingEntry.attempts)
+
+  if (matchingEntry) {
+    // Копируем attempts из найденной записи в today.attempts
+    stat.today.attempts = matchingEntry.attempts
+    stat.today.word = matchingEntry.word
+    localStorage.setItem("gameStats", JSON.stringify(stat))
+  } else {
+    console.log(`Совпадений для слова "${targetWord}" не найдено.`)
+  }
 }
