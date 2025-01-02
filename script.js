@@ -89,11 +89,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadGame() {
   console.log("Загрузка статистики из хранилища");
   const stats = loadStat()
-
+  stats.today.attempts = []
+  localStorage.setItem("gameStats", JSON.stringify(stats))
+  
   const matchingEntry = stats.history.find(entry => entry.word === targetWord)
   // Проверяем, совпадает ли targetWord с сохранённым todayWord
   if (matchingEntry) {
-    console.log("Игра уже началась. Загружаем состояние...");
+    console.log("Загружаем состояние...");
     
     gamePause(true) // Блокируем игровое поле и клавиатуру
     showTimer() // Показываем таймер до следующего слова
