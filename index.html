@@ -39,14 +39,14 @@
             'Authorization': 'Bearer ' + token
           }
         });
-        
+
         if (!response.ok) {
           throw new Error('Invalid token');
         }
         // Если ответ OK – пользователь авторизован, страница продолжит загрузку
       } catch (error) {
         console.error('Verification failed:', error);
-        window.location.href = 'https://richmom.vercel.app/denied?reason=invalid_token';
+        window.location.href = 'https://richmom.vercel.app/denied.html?reason=invalid_token';
       }
     })();
   </script>
