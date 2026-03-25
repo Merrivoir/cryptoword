@@ -224,22 +224,22 @@ h1 {
   transform: rotateY(180deg); /* Переворот на 180 градусов */
 }
 
-.correct {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--status-green) 70%, transparent), rgba(0, 0, 0, 0));
-  background-color: color-mix(in srgb, var(--status-green) 65%, rgba(255, 255, 255, 0.10));
-  color: rgba(255, 255, 255, 0.96);
+div.correct {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--status-green) 70%, transparent), rgba(0, 0, 0, 0)) !important;
+  background-color: color-mix(in srgb, var(--status-green) 65%, rgba(255, 255, 255, 0.10)) !important;
+  color: rgba(255, 255, 255, 0.96) !important;
 }
 
-.present {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--status-orange) 70%, transparent), rgba(0, 0, 0, 0));
-  background-color: color-mix(in srgb, var(--status-orange) 65%, rgba(255, 255, 255, 0.10));
-  color: rgba(255, 255, 255, 0.96);
+div.present {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--status-orange) 70%, transparent), rgba(0, 0, 0, 0)) !important;
+  background-color: color-mix(in srgb, var(--status-orange) 65%, rgba(255, 255, 255, 0.10)) !important;
+  color: rgba(255, 255, 255, 0.96) !important;
 }
 
-.absent {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--status-gray) 55%, transparent), rgba(0, 0, 0, 0));
-  background-color: color-mix(in srgb, var(--status-gray) 55%, rgba(255, 255, 255, 0.08));
-  color: rgba(255, 255, 255, 0.92);
+div.absent {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--status-gray) 55%, transparent), rgba(0, 0, 0, 0)) !important;
+  background-color: color-mix(in srgb, var(--status-gray) 55%, rgba(255, 255, 255, 0.08)) !important;
+  color: rgba(255, 255, 255, 0.92) !important;
 }
 
 .cell-front,
