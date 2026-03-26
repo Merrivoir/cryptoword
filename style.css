@@ -237,7 +237,7 @@ div.present {
 }
 
 div.absent {
-  background: linear-gradient(180deg, color-mix(in srgb, var(--status-gray) 55%, transparent), rgba(0, 0, 0, 0)) !important;
+  background: linear-gradient(180deg, color-mix(in srgb, #FFF 55%, transparent), rgba(255, 255, 255, 0)) !important;
   background-color: color-mix(in srgb, var(--status-gray) 55%, rgba(255, 255, 255, 0.08)) !important;
   color: rgba(255, 255, 255, 0.92) !important;
 }
